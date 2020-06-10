@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class ExtractAsync {
+public class Extract {
 
     public List<Item> getFoodInfo(String url) {
         List<Item> result = new ArrayList<>();
@@ -116,7 +116,7 @@ public class ExtractAsync {
             DatabaseCon db = new DatabaseCon();
 
             boolean toAddFood = db.addRestaurant(name, category);
-            /*
+            
             if (toAddFood) {
                 System.out.println("Restaurant " + name + " added");
                 int restaurant_id = db.getRestaurantID(name);
@@ -127,17 +127,17 @@ public class ExtractAsync {
                         db.addFoodInfo(items, restaurant_id);
                     }
                 } catch (FailingHttpStatusCodeException e) {
-                    System.out.println("Page is error");
+                    System.out.println("Page is error.");
                 }
             }
 
-             */
+            
             return true;
         });
     }
 
     public static void main(String[] args) {
-        ExtractAsync ex = new ExtractAsync();
+        ExtractAsync ex = new Extract();
         DatabaseCon db = new DatabaseCon();
 
         List<Pair> categories = ex.getCategory("https://www.foodpanda.sg/");
