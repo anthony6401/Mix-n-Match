@@ -124,11 +124,6 @@ public class Extract {
             DatabaseCon db = new DatabaseCon();
 
             boolean toAddFood = db.addRestaurant(name, category);
-<<<<<<< HEAD:src/main/java/Extract.java
-
-=======
-            
->>>>>>> 578bf436726f3d859b96460329b539d20b666b0d:src/main/java/ExtractAsync.java
             if (toAddFood) {
                 int restaurant_id = db.getRestaurantID(name);
 
@@ -141,21 +136,12 @@ public class Extract {
                     System.out.println("Page is error.");
                 }
             }
-
-<<<<<<< HEAD:src/main/java/Extract.java
-=======
-            
->>>>>>> 578bf436726f3d859b96460329b539d20b666b0d:src/main/java/ExtractAsync.java
             return true;
         });
     }
 
     public static void main(String[] args) {
-<<<<<<< HEAD:src/main/java/Extract.java
         Extract ex = new Extract();
-=======
-        ExtractAsync ex = new Extract();
->>>>>>> 578bf436726f3d859b96460329b539d20b666b0d:src/main/java/ExtractAsync.java
         DatabaseCon db = new DatabaseCon();
 
         List<Pair> categories = ex.getCategory("https://www.foodpanda.sg/");
