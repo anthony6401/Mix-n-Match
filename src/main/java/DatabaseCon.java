@@ -7,6 +7,36 @@ public class DatabaseCon {
     public static String user = "root";
     public static String password = "Password123";
 
+    public void initializeRestaurantDatabase() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(restaurantURL, user, password);
+            Statement stmt = con.createStatement();
+
+            String query1 = "DELETE FROM food_list WHERE food_id >= 1;";
+            String query2 = "DELETE FROM restaurant_list WHERE restaurant_id >= 1;";
+            String query3 = "ALTER TABLE `restaurantdb`.`restaurant_list` AUTO_INCREMENT = 1;";
+            String query4 = "ALTER TABLE `restaurantdb`.`food_list` AUTO_INCREMENT = 1;";
+            String query5 = "DELETE FROM category_list WHERE category_id >= 1;";
+            String query6 = "ALTER TABLE `restaurantdb`.`category_list` AUTO_INCREMENT = 1;";
+            String query7 = "DELETE FROM restaurant_category WHERE rc_id >= 1;";
+            String query8 = "ALTER TABLE `restaurantdb`.`restaurant_category` AUTO_INCREMENT = 1;";
+
+            stmt.addBatch(query1);
+            stmt.addBatch(query2);
+            stmt.addBatch(query3);
+            stmt.addBatch(query4);
+            stmt.addBatch(query5);
+            stmt.addBatch(query6);
+            stmt.addBatch(query7);
+            stmt.addBatch(query8);
+
+            stmt.executeBatch();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public boolean containsUser(long chat_id) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -217,7 +247,8 @@ public class DatabaseCon {
 
     public static void main(String[] args) {
         DatabaseCon db = new DatabaseCon();
-        db.addRestaurant("LiHo","Bubble Tea");
+        db.initializeRestaurantDatabase();
+        //db.addRestaurant("LiHo","Bubble Tea");
         //db.addUser(1231241231, "inipassword1231");
         //System.out.println(db.getPassword(12345678));
         //db.updateOnline(12312412);
