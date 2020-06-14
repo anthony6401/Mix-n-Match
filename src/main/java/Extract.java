@@ -4,8 +4,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-
-import javax.xml.bind.SchemaOutputResolver;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
@@ -34,10 +32,11 @@ public class Extract {
                     HtmlSpan name = element.getFirstByXPath("div/div/div/h3/span");
                     HtmlSpan price = element.getFirstByXPath("div/section/div/span");
                     String sPrice = price.asText();
+                    float priceNumber = Float.valueOf(sPrice.split("\\$")[1]);
 
                     Item item = new Item();
                     item.setName(name.asText());
-                    item.setPrice(Float.valueOf(sPrice.substring(sPrice.length() - 4)));
+                    item.setPrice(priceNumber);
 
                     result.add(item);
                 }
@@ -130,7 +129,10 @@ public class Extract {
                 try {
                     List<Item> items = getFoodInfo(url);
                     if (items.size() != 0) {
-                        db.addFoodInfo(items, restaurant_id);
+                        for (Item item : items) {
+                            db.addFoodInfo(item, restaurant_id);
+
+                        }
                     }
                 } catch (FailingHttpStatusCodeException e) {
                     System.out.println("Page is error.");
@@ -140,34 +142,38 @@ public class Extract {
         });
     }
 
-    public static void main(String[] args) {
-        Extract ex = new Extract();
+    public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
-
-        List<Pair> categories = ex.getCategory("https://www.foodpanda.sg/");
-
+        List<Pair> categories = getCategory(foodPandaURL);
         for (Pair category : categories) {
             String cat = category.getName();
             String URL = category.getURL();
 
             db.addCategory(cat);
-            List<Pair> pairs = ex.getRestaurantInfo(URL);
+            List<Pair> pairs = getRestaurantInfo(URL);
             List<CompletableFuture<Boolean>> async = new ArrayList<>();
 
             for (Pair pair : pairs) {
                 String restaurantName = pair.getName();
                 String url = pair.getURL();
-                System.out.println(url);
                 System.out.println(restaurantName);
 
                 if (!restaurantName.startsWith("pandamart")) {
-                    CompletableFuture<Boolean> addInfo = ex.addRestaurantAndFoodInfo(restaurantName, url, cat);
+                    CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantName, url, cat);
                     async.add(addInfo);
                 }
             }
 
             CompletableFuture.allOf(async.toArray(new CompletableFuture[0])).join();
         }
+    }
 
+    public static void main(String[] args) {
+        //testing purposes
+        final long startTime = System.nanoTime();
+        Extract ex = new Extract();
+        ex.extract("https://www.foodpanda.sg/");
+        final long duration = System.nanoTime() - startTime;
+        System.out.println("Duration: " + duration/1000000000F);
     }
 }
