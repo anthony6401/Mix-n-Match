@@ -34,10 +34,7 @@ public class Extract {
                     String sPrice = price.asText();
                     float priceNumber = Float.valueOf(sPrice.split("\\$")[1]);
 
-                    Item item = new Item();
-                    item.setName(name.asText());
-                    item.setPrice(priceNumber);
-
+                    Item item = new Item(name.asText(), priceNumber);
                     result.add(item);
                 }
             }

@@ -1,12 +1,9 @@
 public class Item {
     private String name;
-    private float price;
+    private double price;
 
-    public void setName(String name) {
+    Item(String name, double price) {
         this.name = name;
-    }
-
-    public void setPrice(float price) {
         this.price = price;
     }
 
@@ -14,8 +11,18 @@ public class Item {
         return this.name;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return this.price;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof Item) {
+            Item otherItem = (Item) other;
+            return this.name.equals(otherItem.name);
+        }
+
+        return false;
     }
 
     @Override
