@@ -2,11 +2,6 @@ public class StartCommand implements Command {
     private final String arg;
     private final String username;
 
-    StartCommand() {
-        this.arg = null;
-        this.username = null;
-    }
-
     StartCommand(String arg, String username) {
         this.arg = arg;
         this.username = username;

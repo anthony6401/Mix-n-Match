@@ -1,4 +1,5 @@
 public interface Command {
-    public static DatabaseCon db = new DatabaseCon();
-    public String execute();
+    DatabaseCon db = new DatabaseCon();
+    GoogleMapAPI googleMap = new GoogleMapAPI();
+    String execute();
 }

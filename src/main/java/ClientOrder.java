@@ -5,6 +5,8 @@ public class ClientOrder {
     private Map<String, UserOrder> userOrderList;
     private String from;
     private String to;
+    private String inviteLink;
+    private String payNumber;
 
     ClientOrder() {
         this.from = null;
@@ -16,6 +18,8 @@ public class ClientOrder {
         return this.from;
     }
 
+    public String getTo() { return this.to; };
+
     public ClientOrder setFrom(String from) {
         this.from = from;
         deleteAllOrder();
@@ -24,6 +28,16 @@ public class ClientOrder {
 
     public ClientOrder setTo(String to) {
         this.to = to;
+        return this;
+    }
+
+    public ClientOrder setInviteLink(String inviteLink) {
+        this.inviteLink = inviteLink;
+        return this;
+    }
+
+    public ClientOrder setPayNumber(String payNumber) {
+        this.payNumber = payNumber;
         return this;
     }
 

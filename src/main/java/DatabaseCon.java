@@ -201,6 +201,19 @@ public class DatabaseCon {
         }
     }
 
+    public String orderFromSearch(String restaurant) {
+        try {
+            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+                    "FROM restaurant_list\n" +
+                    "WHERE name LIKE \"%" + restaurant + "%\"");
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "No restaurant found";
+        }
+    }
+
     public static void main(String[] args) {
         //testing purposes
         final long startTime = System.nanoTime();

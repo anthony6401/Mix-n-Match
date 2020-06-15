@@ -2,16 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b8b5f7a0-0445-4522-903c-54a9a2518a02" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/ClientOrder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Command.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ExecuteBot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/NoSuchUserExistException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/StartCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/UserOrder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/CheckOrderStatusCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/GoogleMapAPI.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/NotACommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/NotInGroupCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/OrderFromCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/OrderToCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/UserIsOfflineCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Extract.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Extract.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Item.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Item.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ClientOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientOrder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/DatabaseCon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DatabaseCon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/StartCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/StartCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/ClientOrder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ClientOrder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/Command.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/Command.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/DatabaseCon.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/DatabaseCon.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/StartCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/StartCommand.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,7 +42,7 @@
   <component name="ProjectId" id="1d2WOOOZUtvy1lIdk2br27ZZPha" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="D:/Test" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />

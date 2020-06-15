@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import java.util.*;
 
 public class MixnMatchBot extends TelegramLongPollingBot {
-    Map<Long, ClientOrder> map = new HashMap<>();
+    public static Map<Long, ClientOrder> map = new HashMap<>();
     DatabaseCon db = new DatabaseCon();
 
     @Override
@@ -17,21 +17,50 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         String username = update.getMessage().getFrom().getUserName();
         SendMessage message = new SendMessage();
 
+        // Setting the chat id to where the message wil be sent.
         message.setChatId(chat_id);
 
+        // Seperate the command and the argument
         String[] query = update.getMessage().getText().split("\\s", 2);
+        // Command inputted
         String commandString = query[0];
-        Command command = null;
-
-        if (commandString.equals("/start")) {
-            if (query.length == 1) {
-                command = new StartCommand();
-            } else {
-                String arg = query[1];
-                command = new StartCommand(arg, username);
-            }
+        String arg = null;
+        if (query.length != 1) {
+            arg = query[1];
         }
 
+        Command command = null;
+
+        // Start of the bot using the identifier gotten from the website.
+        if (commandString.equals("/start")) {
+            // If the user tries to use the bot without logging in from the website
+            command = new StartCommand(arg, username);
+        // Using the command from the telegram group.
+        } else if (chat_id < 0) {
+            // Checking if the user is login or not.
+            if (!db.isOnline(username)) {
+                command = new UserIsOfflineCommand();
+            } else {
+                // orderfrom command
+                if (commandString.equals("/orderfrom")) {
+                    command = new OrderFromCommand(arg, chat_id);
+                // orderto command
+                } else if (commandString.equals("/orderto")) {
+                    command = new OrderToCommand(arg, chat_id);
+                } else if (commandString.equals("/orderstatus")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new CheckOrderStatusCommand(co);
+                } else {
+                    command = new NotACommand();
+                }
+            }
+        // If the user tries to use any command other than /start in private chat
+        } else if (chat_id > 0) {
+            command = new NotInGroupCommand();
+        }
+
+
+        // Executing the command. The command may be null if the user's message is not starting with "/"
         if (command != null) {
             String botMessage = command.execute();
             message.setChatId(chat_id);
