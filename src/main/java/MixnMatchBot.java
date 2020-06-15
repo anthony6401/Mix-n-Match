@@ -50,13 +50,39 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.equals("/orderstatus")) {
                     ClientOrder co = map.get(chat_id);
                     command = new CheckOrderStatusCommand(co);
+                } else if (commandString.equals("/reset")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new ResetCommand(co);
+                } else if (commandString.equals("/categorylist")) {
+                    command = new CategoryListCommand(arg);
+                } else if (commandString.equals("/restaurantlist")) {
+                    command = new RestaurantListCommand(arg);
+                } else if (commandString.equals("/menu")) {
+                    command = new MenuCommand(arg);
+                } else if (commandString.equals("/searchrestaurant")) {
+                    command = new SearchRestaurantCommand(arg);
+                } else if (commandString.equals("/add")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new AddCommand(arg, username, co);
+                } else if (commandString.equals("/logout")) {
+                    command = new LogoutCommand(username);
+                } else if (commandString.equals("/seemap")) {
+                    System.out.println(map);
                 } else {
                     command = new NotACommand();
                 }
             }
-        // If the user tries to use any command other than /start in private chat
+        // If the user tries message the bot through private message
         } else if (chat_id > 0) {
-            command = new NotInGroupCommand();
+            // Join command
+            if (commandString.equals("/join")) {
+                ClientOrder co = map.get(Long.valueOf(arg));
+                command = new JoinCommand(username, co);
+
+            // If the user tries to use commands available only on groups
+            } else {
+                command = new NotInGroupCommand();
+            }
         }
 
 

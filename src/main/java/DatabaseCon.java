@@ -201,6 +201,40 @@ public class DatabaseCon {
         }
     }
 
+    public String getAllCategory(int page) {
+        try {
+            ResultSet rs;
+            StringBuilder sb = new StringBuilder();
+            if (page == 1) {
+                rs = stmtRes.executeQuery("SELECT name\n" +
+                        "FROM category_list\n" +
+                        "WHERE category_id >= 1 AND category_id <= 20");
+            } else if (page == 2) {
+                rs = stmtRes.executeQuery("SELECT name\n" +
+                        "FROM category_list\n" +
+                        "WHERE category_id > 20 AND category_id <= 40");
+            } else if (page == 3) {
+                rs = stmtRes.executeQuery("SELECT name\n" +
+                        "FROM category_list\n" +
+                        "WHERE category_id > 40");
+            } else {
+                return "Invalid page. There are only 3 pages!";
+            }
+
+            sb.append("Showing page " + page + " from 3:\n");
+
+            while (rs.next()) {
+                sb.append(rs.getString(1) + "\n");
+            }
+
+            sb.append("To change page, please use /categorylist [page]");
+
+            return sb.toString();
+        } catch (SQLException e) {
+            return "";
+        }
+    }
+
     public String orderFromSearch(String restaurant) {
         try {
             ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
@@ -211,6 +245,102 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return "No restaurant found";
+        }
+    }
+
+    public String getRestaurantList(String category) {
+        try {
+            StringBuilder sb = new StringBuilder();
+
+            ResultSet rsID = stmtRes.executeQuery("SELECT *\n" +
+                    "FROM category_list\n" +
+                    "WHERE name LIKE \"" + category + "%\"");
+
+
+            rsID.next();
+            String categorySearched = rsID.getString(2);
+            int category_id = rsID.getInt(1);
+
+            ResultSet rs = stmtRes.executeQuery("SELECT restaurant_name\n" +
+                    "FROM restaurant_category\n" +
+                    "WHERE category_id = " + category_id);
+
+            sb.append("Restaurant in " + categorySearched + " category:\n");
+            while (rs.next()) {
+                sb.append(rs.getString(1) + "\n");
+            }
+
+            return sb.toString().trim();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Invalid category. Please use /categorylist to see all " +
+                    "the available category.";
+        }
+    }
+
+    public String getRestaurantMenu(String restaurant) {
+        try {
+            StringBuilder sb = new StringBuilder();
+
+            ResultSet rsID = stmtRes.executeQuery("SELECT *\n" +
+                    "FROM restaurant_list\n" +
+                    "WHERE name LIKE \"" + restaurant + "%\"");
+
+
+            rsID.next();
+            String restaurantSearched = rsID.getString(2);
+            int restaurant_id = rsID.getInt(1);
+
+            ResultSet rs = stmtRes.executeQuery("SELECT name, price\n" +
+                    "FROM food_list\n" +
+                    "WHERE restaurant_id = " + restaurant_id);
+
+            sb.append(restaurantSearched + "\'s menu:\n");
+            while (rs.next()) {
+                sb.append(rs.getString(1) + " -- $" + rs.getFloat(2) + "\n");
+            }
+
+            return sb.toString().trim();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Invalid restaurant. Please use /restaurantsearch to see all" +
+                    "the available restaurant.";
+        }
+    }
+
+    public String searchRestaurant(String keyword) {
+        try {
+            StringBuilder sb = new StringBuilder();
+
+            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+                    "FROM restaurant_list\n" +
+                    "WHERE name LIKE \"%" + keyword + "%\"");
+
+            sb.append("Restaurant avalaible:\n");
+
+            while (rs.next()) {
+                sb.append(rs.getString(1) + "\n");
+            }
+            return sb.toString().trim();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "No restaurant found";
+        }
+    }
+
+    public Item findItem(String item, int restaurantID) {
+        try {
+            ResultSet rs = stmtRes.executeQuery("SELECT name, price\n" +
+                    "FROM food_list\n" +
+                    "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
+            rs.next();
+
+            return new Item(rs.getString(1), rs.getDouble(2));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
