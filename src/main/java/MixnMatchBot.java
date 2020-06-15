@@ -96,11 +96,11 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "MixnMatchBot";
+        return BotIdentity.username;
     }
 
     @Override
     public String getBotToken() {
-        return "1242060435:AAHiEreNvJ5Qw3cud-TOef7IULiUwz8wpxg";
+        return BotIdentity.botToken;
     }
 }
