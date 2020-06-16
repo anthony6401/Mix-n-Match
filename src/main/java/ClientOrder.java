@@ -6,12 +6,14 @@ public class ClientOrder {
     private String from;
     private String to;
     private String inviteLink;
-    private String payNumber;
+    private boolean finalizeStatus;
+    private String mobileNumber;
 
     ClientOrder() {
         this.from = null;
         this.to = null;
         this.userOrderList = new HashMap();
+        this.finalizeStatus = false;
     }
 
     public String getFrom() {
@@ -19,6 +21,10 @@ public class ClientOrder {
     }
 
     public String getTo() { return this.to; };
+
+    public boolean getFinalizeStatus() { return this.finalizeStatus; };
+
+    public String getInviteLink() {return this.inviteLink; };
 
     public ClientOrder setFrom(String from) {
         this.from = from;
@@ -31,13 +37,18 @@ public class ClientOrder {
         return this;
     }
 
+    public ClientOrder finalizeOrder() {
+        this.finalizeStatus = true;
+        return this;
+    }
+
     public ClientOrder setInviteLink(String inviteLink) {
         this.inviteLink = inviteLink;
         return this;
     }
 
-    public ClientOrder setPayNumber(String payNumber) {
-        this.payNumber = payNumber;
+    public ClientOrder setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
         return this;
     }
 
@@ -63,11 +74,20 @@ public class ClientOrder {
         return this;
     }
 
-    public ClientOrder deleteOrder(String username, String order) throws NoSuchUserExistException {
+    public ClientOrder deleteAllOrderFromUser(String username) throws NoSuchUserExistException {
         try {
             UserOrder uo = userOrderList.get(username);
-            uo.deleteOrder(order);
+            uo.resetOrder();
             return this;
+        } catch (NullPointerException e) {
+            throw new NoSuchUserExistException();
+        }
+    }
+
+    public boolean deleteOrder(String username, String order) throws NoSuchUserExistException {
+        try {
+            UserOrder uo = userOrderList.get(username);
+            return uo.deleteOrder(order);
         } catch (NullPointerException e) {
             throw new NoSuchUserExistException();
         }
@@ -82,7 +102,15 @@ public class ClientOrder {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, UserOrder> entry : userOrderList.entrySet()) {
             sb.append(entry.getKey() + "'s orders:\n");
-            sb.append(entry.getValue().toString() + "\n");
+            sb.append(entry.getValue().toString() + "\n\n");
+        }
+
+        if (inviteLink != null) {
+            sb.append("Group invite link: " + inviteLink + "\n");
+        }
+
+        if (mobileNumber != null) {
+            sb.append("Pay to: " + mobileNumber);
         }
 
         if (from == null) {

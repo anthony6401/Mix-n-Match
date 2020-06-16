@@ -24,11 +24,21 @@ public class AddCommand implements Command {
         String[] arr = orderList.split("\n");
         int restaurantID = db.getRestaurantID(co.getFrom());
         for (String item : arr) {
-            Item itemSearched = db.findItem(item, restaurantID);
+            String[] nameAndDesc = item.split("--");
+            String itemName = nameAndDesc[0];
+            System.out.println(itemName);
+            String desc = null;
+
+            if (nameAndDesc.length != 1) {
+                desc = nameAndDesc[1];
+            }
+
+            Item itemSearched = db.findItem(itemName.trim(), restaurantID);
             if (itemSearched == null) {
                 notFound = true;
-                sb.append(item);
+                sb.append(item + "\n");
             } else {
+                itemSearched.setDesc(desc);
                 try {
                     co.addOrder(username, itemSearched);
                 } catch (NoSuchUserExistException e) {

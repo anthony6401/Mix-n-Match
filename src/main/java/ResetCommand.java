@@ -12,6 +12,7 @@ public class ResetCommand implements Command {
         } else {
             co.setFrom(null);
             co.setTo(null);
+            co.deleteAllOrder();
             return "Successfully clear the order!";
         }
     }

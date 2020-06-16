@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import java.util.*;
 
 public class MixnMatchBot extends TelegramLongPollingBot {
+    public static int MAX_TELEGRAM_MESSAGE_LENGTH = 4096;
     public static Map<Long, ClientOrder> map = new HashMap<>();
     DatabaseCon db = new DatabaseCon();
 
@@ -50,6 +51,11 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.equals("/orderstatus")) {
                     ClientOrder co = map.get(chat_id);
                     command = new CheckOrderStatusCommand(co);
+                } else if (commandString.equals("/invitelink")) {
+                    command = new InviteLinkCommand(arg, chat_id);
+                } else if (commandString.equals("/finalizeorder")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new FinalizeOrderCommand(username, co);
                 } else if (commandString.equals("/reset")) {
                     ClientOrder co = map.get(chat_id);
                     command = new ResetCommand(co);
@@ -64,10 +70,14 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.equals("/add")) {
                     ClientOrder co = map.get(chat_id);
                     command = new AddCommand(arg, username, co);
+                } else if (commandString.equals("/remove")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new RemoveCommand(arg, username, co);
+                } else if (commandString.equals("/removeall")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new RemoveAllCommand(username, co);
                 } else if (commandString.equals("/logout")) {
                     command = new LogoutCommand(username);
-                } else if (commandString.equals("/seemap")) {
-                    System.out.println(map);
                 } else {
                     command = new NotACommand();
                 }
@@ -90,8 +100,18 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         if (command != null) {
             String botMessage = command.execute();
             message.setChatId(chat_id);
-            message.setText(botMessage);
-            sendMessage(message);
+            // If the botMessage is too long to be sent from the telegram bot
+            if (botMessage.length() > MAX_TELEGRAM_MESSAGE_LENGTH) {
+                List<String> splittedMessage = StringSplitter.split(botMessage);
+                for (String msg : splittedMessage) {
+                    message.setText(msg);
+                    sendMessage(message);
+                }
+            // BotMessage is short enough to be sent from the telegram bot
+            } else {
+                message.setText(botMessage);
+                sendMessage(message);
+            }
         }
 
     }

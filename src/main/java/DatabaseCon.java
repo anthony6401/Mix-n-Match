@@ -50,9 +50,9 @@ public class DatabaseCon {
 
     public boolean containsUser(String username) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT username\n" +
+            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_username\n" +
                     "FROM user\n" +
-                    "WHERE username = \"" + username + "\"");
+                    "WHERE Telegram_username = \"" + username + "\"");
             rs.next();
             return rs.getString(1).equals(username);
         } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class DatabaseCon {
         try {
             ResultSet rs = stmtUser.executeQuery("SELECT Status\n" +
                     "FROM user\n" +
-                    "WHERE username = \"" + username + "\"");
+                    "WHERE Telegram_username = \"" + username + "\"");
             rs.next();
             return rs.getInt(1) == 1;
         } catch (SQLException e) {
@@ -72,23 +72,11 @@ public class DatabaseCon {
         }
     }
 
-    public String getPassword(String username) {
-        try {
-            ResultSet rs = stmtUser.executeQuery("SELECT password\n" +
-                    "FROM user\n" +
-                    "WHERE username = \"" + username + "\"");
-            rs.next();
-            return rs.getString(1);
-        } catch (SQLException e) {
-            return null;
-        }
-    }
-
     public boolean updateOnline(String username) {
         try {
             stmtUser.execute("UPDATE user\n" +
                     "SET status = 1\n" +
-                    "WHERE username = \"" + username + "\"");
+                    "WHERE Telegram_username = \"" + username + "\"");
             return true;
         } catch (SQLException e) {
             return false;
@@ -99,10 +87,34 @@ public class DatabaseCon {
         try {
             stmtUser.execute("UPDATE user\n" +
                     "SET status = 2\n" +
-                    "WHERE username = \"" + username + "\"");
+                    "WHERE Telegram_username = \"" + username + "\"");
             return true;
         } catch (SQLException e) {
             return false;
+        }
+    }
+
+    public String getMobileNumber(String username) {
+        try {
+            ResultSet rs = stmtUser.executeQuery("SELECT Mobile_number\n" +
+                    "FROM user\n" +
+                    "WHERE Telegram_username = \"" + username + "\"");
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            return null;
+        }
+    }
+
+    public String getPassword(String username) {
+        try {
+            ResultSet rs = stmtUser.executeQuery("SELECT password\n" +
+                    "FROM user\n" +
+                    "WHERE Telegram_username = \"" + username + "\"");
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            return null;
         }
     }
 
@@ -212,16 +224,12 @@ public class DatabaseCon {
             } else if (page == 2) {
                 rs = stmtRes.executeQuery("SELECT name\n" +
                         "FROM category_list\n" +
-                        "WHERE category_id > 20 AND category_id <= 40");
-            } else if (page == 3) {
-                rs = stmtRes.executeQuery("SELECT name\n" +
-                        "FROM category_list\n" +
-                        "WHERE category_id > 40");
+                        "WHERE category_id > 20");
             } else {
-                return "Invalid page. There are only 3 pages!";
+                return "Invalid page. There are only 2 pages!";
             }
 
-            sb.append("Showing page " + page + " from 3:\n");
+            sb.append("Showing page " + page + " from 2:\n");
 
             while (rs.next()) {
                 sb.append(rs.getString(1) + "\n");
@@ -346,11 +354,14 @@ public class DatabaseCon {
 
     public static void main(String[] args) {
         //testing purposes
-        final long startTime = System.nanoTime();
+//        final long startTime = System.nanoTime();
+//        DatabaseCon db = new DatabaseCon();
+//        db.initializeRestaurantDatabase();
+//        final long duration = System.nanoTime() - startTime;
+//        System.out.println("Duration: " + duration/1000000000F);
+
         DatabaseCon db = new DatabaseCon();
-        db.initializeRestaurantDatabase();
-        final long duration = System.nanoTime() - startTime;
-        System.out.println("Duration: " + duration/1000000000F);
+        System.out.println(db.getMobileNumber("anthony_tony"));
         //db.addRestaurant("LiHo","Bubble Tea");
         //db.addUser(1231241231, "inipassword1231");
         //System.out.println(db.getPassword(12345678));

@@ -21,6 +21,9 @@ public class OrderFromCommand implements Command {
         } else {
             if (MixnMatchBot.map.containsKey(chat_id)) {
                 ClientOrder co = MixnMatchBot.map.get(chat_id);
+                if (co.getFinalizeStatus()) {
+                    return "You have finalize your order! If you want to reset, please make another group!";
+                }
                 co.setFrom(restaurant);
             } else {
                 ClientOrder co = new ClientOrder();

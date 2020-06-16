@@ -14,6 +14,10 @@ public class OrderToCommand implements Command {
             return "You did not specify where you want to order to!";
         }
 
+        if (MixnMatchBot.map.get(chat_id).getFinalizeStatus()) {
+            return "You have finalize your order! If you want to reset, please make another group!";
+        }
+
         String place = googleMap.findPlace(arg);
 
         if (place.startsWith("No place found")) {
@@ -21,6 +25,9 @@ public class OrderToCommand implements Command {
         } else {
             if (MixnMatchBot.map.containsKey(chat_id)) {
                 ClientOrder co = MixnMatchBot.map.get(chat_id);
+                if (co.getFinalizeStatus()) {
+                    return "You have finalize your order! If you want to reset, please make another group!";
+                }
                 co.setTo(place);
             } else {
                 ClientOrder co = new ClientOrder();
