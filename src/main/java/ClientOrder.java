@@ -6,6 +6,8 @@ public class ClientOrder {
     private String from;
     private String to;
     private String inviteLink;
+    private Integer timeLimit; // In seconds
+    private Integer startTime;
     private boolean finalizeStatus;
     private String mobileNumber;
 
@@ -25,6 +27,14 @@ public class ClientOrder {
     public boolean getFinalizeStatus() { return this.finalizeStatus; };
 
     public String getInviteLink() {return this.inviteLink; };
+
+    public Integer getTimeLimit() {
+        return this.timeLimit;
+    }
+
+    public Integer getStartTime() {
+        return this.startTime;
+    }
 
     public ClientOrder setFrom(String from) {
         this.from = from;
@@ -50,6 +60,20 @@ public class ClientOrder {
     public ClientOrder setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
         return this;
+    }
+
+    public ClientOrder setTimeLimit(Integer timeLimit) {
+        this.timeLimit = timeLimit;
+        return this;
+    }
+
+    public ClientOrder setStartTime(Integer startTime) {
+        this.startTime = startTime;
+        return this;
+    }
+
+    public boolean isWithinTimeLimit(long time) {
+        return time - startTime <= timeLimit;
     }
 
     public ClientOrder addUser(String username) {
@@ -110,7 +134,11 @@ public class ClientOrder {
         }
 
         if (mobileNumber != null) {
-            sb.append("Pay to: " + mobileNumber);
+            sb.append("Pay to: " + mobileNumber + "\n");
+        }
+
+        if (startTime != null) {
+            sb.append("End at: " + DateTime.unixTimeToDate(startTime + timeLimit));
         }
 
         if (from == null) {

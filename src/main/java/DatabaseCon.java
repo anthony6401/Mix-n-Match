@@ -1,4 +1,6 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseCon {
     public static String userdbURL = "jdbc:mysql://localhost:3306/usersdb?serverTimezone=MST";
@@ -48,13 +50,24 @@ public class DatabaseCon {
         }
     }
 
-    public boolean containsUser(String username) {
+    public boolean containsUser(String telegramCode) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_username\n" +
+            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_code\n" +
                     "FROM user\n" +
-                    "WHERE Telegram_username = \"" + username + "\"");
+                    "WHERE Telegram_code = \"" + telegramCode + "\"");
             rs.next();
-            return rs.getString(1).equals(username);
+            return rs.getString(1).equals(telegramCode);
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    public boolean addTelegramInformation(String telegramCode, String username, long chat_id) {
+        try {
+            stmtUser.execute("UPDATE user\n" +
+                    "SET Telegram_username = \"" + username + "\", Telegram_chat_id = " + chat_id + "\n" +
+                    "WHERE Telegram_code = \"" + telegramCode + "\"");
+            return true;
         } catch (SQLException e) {
             return false;
         }
@@ -65,18 +78,63 @@ public class DatabaseCon {
             ResultSet rs = stmtUser.executeQuery("SELECT Status\n" +
                     "FROM user\n" +
                     "WHERE Telegram_username = \"" + username + "\"");
-            rs.next();
-            return rs.getInt(1) == 1;
+
+            while (rs.next()) {
+                if (rs.getInt(1) == 1) {
+                    return true;
+                }
+            }
+
+            return false;
         } catch (SQLException e) {
             return false;
         }
     }
 
-    public boolean updateOnline(String username) {
+    public List<UserInfo> getListOfOnlineUserExceptUser(String username) {
+        List<UserInfo> result = new ArrayList<>();
+
+        try {
+            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_chat_id, Longitude, Latitude\n" +
+                    "FROM user\n" +
+                    "WHERE Status = 1 AND Telegram_username != \"" + username + "\"");
+
+            while (rs.next()) {
+                result.add(new UserInfo(rs.getLong(1),
+                        rs.getDouble(2), rs.getDouble(3)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public UserInfo getUserInfo(String username) {
+        try {
+            ResultSet rs = stmtUser.executeQuery("SELECT Status, Telegram_chat_id, Longitude, Latitude\n" +
+                    "FROM user\n" +
+                    "WHERE Telegram_username = \"" + username + "\"");
+
+            while (rs.next()) {
+                if (rs.getInt(1) == 1) {
+                    return new UserInfo(rs.getLong(2), rs.getDouble(3)
+                            , rs.getDouble(4));
+                }
+            }
+
+            return null;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+        public boolean updateOnline(String telegramCode) {
         try {
             stmtUser.execute("UPDATE user\n" +
                     "SET status = 1\n" +
-                    "WHERE Telegram_username = \"" + username + "\"");
+                    "WHERE Telegram_code = \"" + telegramCode + "\"");
             return true;
         } catch (SQLException e) {
             return false;
@@ -361,7 +419,7 @@ public class DatabaseCon {
 //        System.out.println("Duration: " + duration/1000000000F);
 
         DatabaseCon db = new DatabaseCon();
-        System.out.println(db.getMobileNumber("anthony_tony"));
+        System.out.println(db.getUserInfo("anthony_tony"));
         //db.addRestaurant("LiHo","Bubble Tea");
         //db.addUser(1231241231, "inipassword1231");
         //System.out.println(db.getPassword(12345678));

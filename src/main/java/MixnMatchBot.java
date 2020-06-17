@@ -32,12 +32,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
         Command command = null;
 
-        // Start of the bot using the identifier gotten from the website.
-        if (commandString.equals("/start")) {
-            // If the user tries to use the bot without logging in from the website
-            command = new StartCommand(arg, username);
-        // Using the command from the telegram group.
-        } else if (chat_id < 0) {
+        if (chat_id < 0) {
             // Checking if the user is login or not.
             if (!db.isOnline(username)) {
                 command = new UserIsOfflineCommand();
@@ -53,9 +48,12 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new CheckOrderStatusCommand(co);
                 } else if (commandString.equals("/invitelink")) {
                     command = new InviteLinkCommand(arg, chat_id);
+                } else if (commandString.equals("/settime")) {
+                    command = new SetTimeCommand(arg, chat_id);
                 } else if (commandString.equals("/finalizeorder")) {
+                    Integer time = update.getMessage().getDate();
                     ClientOrder co = map.get(chat_id);
-                    command = new FinalizeOrderCommand(username, co);
+                    command = new FinalizeOrderCommand(username, chat_id, time, co);
                 } else if (commandString.equals("/reset")) {
                     ClientOrder co = map.get(chat_id);
                     command = new ResetCommand(co);
@@ -76,19 +74,25 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.equals("/removeall")) {
                     ClientOrder co = map.get(chat_id);
                     command = new RemoveAllCommand(username, co);
-                } else if (commandString.equals("/logout")) {
-                    command = new LogoutCommand(username);
                 } else {
                     command = new NotACommand();
                 }
             }
         // If the user tries message the bot through private message
         } else if (chat_id > 0) {
-            // Join command
-            if (commandString.equals("/join")) {
-                ClientOrder co = map.get(Long.valueOf(arg));
-                command = new JoinCommand(username, co);
 
+            // Start of the bot using the identifier gotten from the website.
+            if (commandString.equals("/start")) {
+                // If the user tries to use the bot without logging in from the website
+                command = new StartCommand(arg, username, chat_id);
+                // Join command
+            } else if (commandString.equals("/join")) {
+                Integer time = update.getMessage().getDate();
+                ClientOrder co = map.get(Long.valueOf(arg));
+                command = new JoinCommand(username, time, co);
+            // Logout command
+            } else if (commandString.equals("/logout")) {
+                command = new LogoutCommand(username);
             // If the user tries to use commands available only on groups
             } else {
                 command = new NotInGroupCommand();
@@ -99,6 +103,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         // Executing the command. The command may be null if the user's message is not starting with "/"
         if (command != null) {
             String botMessage = command.execute();
+
             message.setChatId(chat_id);
             // If the botMessage is too long to be sent from the telegram bot
             if (botMessage.length() > MAX_TELEGRAM_MESSAGE_LENGTH) {
@@ -112,8 +117,17 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 message.setText(botMessage);
                 sendMessage(message);
             }
-        }
 
+            if (command instanceof FinalizeOrderCommand) {
+                FinalizeOrderCommand foCommand = (FinalizeOrderCommand) command;
+                List<SendMessage> messageList = foCommand.notifyOnlineUser();
+
+                for (SendMessage msg : messageList) {
+                    System.out.println(msg.getChatId());
+                    sendMessage(msg);
+                }
+            }
+        }
     }
 
     private void sendMessage(SendMessage message) {
