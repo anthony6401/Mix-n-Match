@@ -2,27 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b8b5f7a0-0445-4522-903c-54a9a2518a02" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/DateTime.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Notification.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/PlaceInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/SetTimeCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/UserInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/CommandListCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/DeliveryCostCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/HelpCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/CategoryListCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/CategoryListCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ClientOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ClientOrder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/DatabaseCon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/DatabaseCon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/FinalizeOrderCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/FinalizeOrderCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/GoogleMapAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/GoogleMapAPI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/JoinCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/JoinCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/StartCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/StartCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Notification.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/OrderToCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/OrderToCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ResetCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ResetCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/UserOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/UserOrder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/ClientOrder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/ClientOrder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/DatabaseCon.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/DatabaseCon.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/FinalizeOrderCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/FinalizeOrderCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/JoinCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/JoinCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/StartCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/StartCommand.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

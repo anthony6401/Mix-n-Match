@@ -19,6 +19,10 @@ public class JoinCommand implements Command {
             return "The time limit has passed!";
         }
 
+        if (co.containsUser(username)) {
+            return "You have join this group!";
+        }
+
         co.addUser(username);
         return "Successfully join a group!\n" +
                 "Here is the group invite link: " + co.getInviteLink();

@@ -6,6 +6,7 @@ public class Notification {
     private final String username;
     private final long chat_id;
     private final ClientOrder co;
+    private final double RADIUS_NOTIFICATION = 0.5;
 
     Notification(String username, long chat_id, ClientOrder co) {
         this.username = username;
@@ -49,7 +50,7 @@ public class Notification {
                         Math.sin(dLon / 2) * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double d = r * c; // Distance in km
-        return d <= 0.2;
+        return d <= RADIUS_NOTIFICATION;
     }
 
     private double degToRad(double deg) {

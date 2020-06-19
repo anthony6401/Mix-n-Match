@@ -32,7 +32,9 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
         Command command = null;
 
-        if (chat_id < 0) {
+        if (commandString.equals("/help")) {
+            command = new HelpCommand();
+        } else if (chat_id < 0) {
             // Checking if the user is login or not.
             if (!db.isOnline(username)) {
                 command = new UserIsOfflineCommand();
@@ -55,10 +57,9 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     ClientOrder co = map.get(chat_id);
                     command = new FinalizeOrderCommand(username, chat_id, time, co);
                 } else if (commandString.equals("/reset")) {
-                    ClientOrder co = map.get(chat_id);
-                    command = new ResetCommand(co);
+                    command = new ResetCommand(chat_id);
                 } else if (commandString.equals("/categorylist")) {
-                    command = new CategoryListCommand(arg);
+                    command = new CategoryListCommand();
                 } else if (commandString.equals("/restaurantlist")) {
                     command = new RestaurantListCommand(arg);
                 } else if (commandString.equals("/menu")) {
@@ -74,6 +75,11 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.equals("/removeall")) {
                     ClientOrder co = map.get(chat_id);
                     command = new RemoveAllCommand(username, co);
+                } else if (commandString.equals("/deliverycost")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new DeliveryCostCommand(arg, co);
+                } else if (commandString.equals("/commandlist")) {
+                    command = new CommandListCommand();
                 } else {
                     command = new NotACommand();
                 }

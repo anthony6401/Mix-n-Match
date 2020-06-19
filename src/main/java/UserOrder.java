@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 public class UserOrder {
     private List<Item> orders;
     private double totalPrice;
+    private double deliveryCost;
 
     UserOrder() {
         this.orders = new ArrayList<>();
@@ -14,6 +15,10 @@ public class UserOrder {
     public void resetOrder() {
         this.orders = new ArrayList<>();
         totalPrice = 0;
+    }
+
+    public void setDeliveryCost(double deliveryCost) {
+        this.deliveryCost = deliveryCost;
     }
 
     public void addOrder(Item item) {
@@ -44,7 +49,9 @@ public class UserOrder {
             sb.append(item.toString() + "\n");
         }
 
-        sb.append("Total Price: $" + this.totalPrice + "\n");
+        sb.append("Total Price: $" + this.totalPrice + "\n" +
+                "Total Price : $" + String.format("%.2f", (this.totalPrice + this.deliveryCost))
+                + " (Delivery cost included)");
 
         return sb.toString().trim();
     }

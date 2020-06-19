@@ -271,31 +271,18 @@ public class DatabaseCon {
         }
     }
 
-    public String getAllCategory(int page) {
+    public String getAllCategory() {
         try {
-            ResultSet rs;
+            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+                    "FROM category_list\n" +
+                    "WHERE category_id >= 1");
             StringBuilder sb = new StringBuilder();
-            if (page == 1) {
-                rs = stmtRes.executeQuery("SELECT name\n" +
-                        "FROM category_list\n" +
-                        "WHERE category_id >= 1 AND category_id <= 20");
-            } else if (page == 2) {
-                rs = stmtRes.executeQuery("SELECT name\n" +
-                        "FROM category_list\n" +
-                        "WHERE category_id > 20");
-            } else {
-                return "Invalid page. There are only 2 pages!";
-            }
-
-            sb.append("Showing page " + page + " from 2:\n");
 
             while (rs.next()) {
                 sb.append(rs.getString(1) + "\n");
             }
 
-            sb.append("To change page, please use /categorylist [page]");
-
-            return sb.toString();
+            return sb.toString().trim();
         } catch (SQLException e) {
             return "";
         }

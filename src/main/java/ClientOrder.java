@@ -8,6 +8,8 @@ public class ClientOrder {
     private String inviteLink;
     private Integer timeLimit; // In seconds
     private Integer startTime;
+    private double deliveryCost;
+    public int numberOfPeople;
     private boolean finalizeStatus;
     private String mobileNumber;
 
@@ -15,6 +17,7 @@ public class ClientOrder {
         this.from = null;
         this.to = null;
         this.userOrderList = new HashMap();
+        this.numberOfPeople = 0;
         this.finalizeStatus = false;
     }
 
@@ -72,13 +75,23 @@ public class ClientOrder {
         return this;
     }
 
+    public ClientOrder setDeliveryCost(double deliveryCost) {
+        this.deliveryCost = deliveryCost;
+        return this;
+    }
+
     public boolean isWithinTimeLimit(long time) {
         return time - startTime <= timeLimit;
     }
 
     public ClientOrder addUser(String username) {
+        numberOfPeople++;
         userOrderList.put(username, new UserOrder());
         return this;
+    }
+
+    public boolean containsUser(String username) {
+        return userOrderList.containsKey(username);
     }
 
     public ClientOrder addOrder(String username, Item item) throws NoSuchUserExistException {
@@ -126,6 +139,7 @@ public class ClientOrder {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, UserOrder> entry : userOrderList.entrySet()) {
             sb.append(entry.getKey() + "'s orders:\n");
+            entry.getValue().setDeliveryCost(deliveryCost / numberOfPeople);
             sb.append(entry.getValue().toString() + "\n\n");
         }
 
