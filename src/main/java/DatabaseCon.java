@@ -91,6 +91,61 @@ public class DatabaseCon {
         }
     }
 
+    public String getHistory(String username) {
+        try {
+            int userID = getUserID(username);
+            ResultSet rs = stmtUser.executeQuery("SELECT order_from, order_to\n" +
+                    "FROM history\n" +
+                    "WHERE user_id = " + userID);
+
+            StringBuilder sb = new StringBuilder();
+
+            while (rs.next()) {
+                sb.append("Ordered from " + rs.getString(1) +
+                        " to " + rs.getString(2) + "\n");
+            }
+
+            return sb.toString().trim();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    public int getUserID(String username) {
+        try {
+            ResultSet rs = stmtUser.executeQuery("SELECT user_id\n" +
+                    "FROM user\n" +
+                    "WHERE Telegram_username = \"" + username + "\" AND STATUS = 1");
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public boolean addHistory(String username, String from, String to) {
+        try {
+            int userID = getUserID(username);
+            if (userID != -1) {
+                System.out.println("INSERT INTO history\n" +
+                        "VALUES (DEFAULT, " + userID + ", \"" + from + "\", \"" + to + "\")");
+                stmtUser.execute("INSERT INTO history\n" +
+                        "VALUES (DEFAULT, " + userID + ", \"" + from + "\", \"" + to + "\")");
+
+
+
+                return true;
+            }
+
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public List<UserInfo> getListOfOnlineUserExceptUser(String username) {
         List<UserInfo> result = new ArrayList<>();
 
@@ -278,6 +333,8 @@ public class DatabaseCon {
                     "WHERE category_id >= 1");
             StringBuilder sb = new StringBuilder();
 
+            sb.append("All avalaible categories:\n");
+
             while (rs.next()) {
                 sb.append(rs.getString(1) + "\n");
             }
@@ -399,18 +456,9 @@ public class DatabaseCon {
 
     public static void main(String[] args) {
         //testing purposes
-//        final long startTime = System.nanoTime();
-//        DatabaseCon db = new DatabaseCon();
-//        db.initializeRestaurantDatabase();
-//        final long duration = System.nanoTime() - startTime;
-//        System.out.println("Duration: " + duration/1000000000F);
-
         DatabaseCon db = new DatabaseCon();
-        System.out.println(db.getUserInfo("anthony_tony"));
-        //db.addRestaurant("LiHo","Bubble Tea");
-        //db.addUser(1231241231, "inipassword1231");
-        //System.out.println(db.getPassword(12345678));
-        //db.updateOnline(12312412);
+//        db.initializeRestaurantDatabase();
+        db.addHistory("anthony_tony", "KOI", "SMAK 4 Penabur");
 
     }
 }

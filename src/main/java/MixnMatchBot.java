@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MixnMatchBot extends TelegramLongPollingBot {
     public static int MAX_TELEGRAM_MESSAGE_LENGTH = 4096;
@@ -80,6 +81,8 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new DeliveryCostCommand(arg, co);
                 } else if (commandString.equals("/commandlist")) {
                     command = new CommandListCommand();
+                } else if (commandString.equals("/history")) {
+                    command = new HistoryCommand(username);
                 } else {
                     command = new NotACommand();
                 }
@@ -117,6 +120,13 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 for (String msg : splittedMessage) {
                     message.setText(msg);
                     sendMessage(message);
+
+                    //bot can't send multiple message under one second
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             // BotMessage is short enough to be sent from the telegram bot
             } else {
@@ -129,7 +139,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 List<SendMessage> messageList = foCommand.notifyOnlineUser();
 
                 for (SendMessage msg : messageList) {
-                    System.out.println(msg.getChatId());
                     sendMessage(msg);
                 }
             }

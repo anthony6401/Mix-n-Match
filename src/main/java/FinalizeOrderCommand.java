@@ -53,6 +53,7 @@ public class FinalizeOrderCommand implements Command {
             return sb.toString();
         }
 
+        db.addHistory(username, co.getFrom(), co.getTo());
         co.addUser(username);
         co.setMobileNumber(db.getMobileNumber(username));
         co.setStartTime(startTime);

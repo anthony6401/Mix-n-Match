@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class StringSplitter {
 
     public static List<String> split(String text) {
+        System.out.println(text);
         List<String> result = new ArrayList<>();
         Scanner sc = new Scanner(text);
         StringBuilder sb = new StringBuilder();
@@ -23,5 +24,10 @@ public class StringSplitter {
         result.add(sb.toString().trim());
 
         return result;
+    }
+
+    public static void main(String[] args) {
+        DatabaseCon db = new DatabaseCon();
+        System.out.println(split(db.getRestaurantMenu("Ichiban Sushi")));
     }
 }
