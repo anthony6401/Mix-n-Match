@@ -1,6 +1,7 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
+import bot.utility.DateTime;
 import bot.utility.Notification;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -60,10 +61,11 @@ public class FinalizeOrderCommand implements Command {
             return sb.toString();
         }
 
-        db.addHistory(telegram_id, co.getFrom(), co.getTo());
+        db.addHistory(DateTime.unixTimeToDate(startTime), telegram_id, co.getFrom(), co.getTo());
         co.addUser(telegram_id, username);
         co.setMobileNumber(db.getMobileNumber(telegram_id));
         co.setStartTime(startTime);
+        co.getUser(telegram_id).setStatusToOrderee();
         co.finalizeOrder();
         return "Successfully ordering! Notifying all the user around you right now.";
     }

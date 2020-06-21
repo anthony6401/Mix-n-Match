@@ -1,6 +1,7 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
+import bot.utility.DateTime;
 
 import java.util.Map;
 
@@ -8,7 +9,6 @@ public class SetTimeCommand implements Command {
     private final Map<Long, ClientOrder> map;
     private final String timeLimit; // In minutes
     private final long chat_id;
-    private final int MINUTES_TO_SECONDS = 60;
 
 
     public SetTimeCommand(Map<Long, ClientOrder> map, String timeLimit, long chat_id) {
@@ -29,10 +29,10 @@ public class SetTimeCommand implements Command {
                 if (co.getFinalizeStatus()) {
                     return "You have finalize your order! If you want to reset, please make another group!";
                 }
-                co.setTimeLimit(Integer.valueOf(timeLimit) * MINUTES_TO_SECONDS); // Change into seconds
+                co.setTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
             } else {
                 ClientOrder co = new ClientOrder();
-                co.setTimeLimit(Integer.valueOf(timeLimit) * MINUTES_TO_SECONDS); // Change into seconds
+                co.setTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
                 this.map.put(chat_id, co);
             }
         } catch (NumberFormatException e) {

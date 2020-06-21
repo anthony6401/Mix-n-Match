@@ -44,6 +44,12 @@ public class Notification {
             }
         }
 
+        // Test by sending the notification to myself
+        SendMessage message = new SendMessage();
+        message.setChatId((long) 861353631);
+        message.setText(botMessage);
+        result.add(message);
+
         return result;
     }
 

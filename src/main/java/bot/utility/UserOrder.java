@@ -12,9 +12,6 @@ public class UserOrder {
     private String username;
     private UserStatus status;
 
-    enum UserStatus {
-        ORDEREE, NOT_PAID, PAID;
-    }
 
     UserOrder() {
         this.orders = new ArrayList<>();
@@ -25,6 +22,14 @@ public class UserOrder {
     public void resetOrder() {
         this.orders = new ArrayList<>();
         totalPrice = 0;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public UserStatus getStatus() {
+        return this.status;
     }
 
     public void setDeliveryCost(double deliveryCost) {
@@ -76,7 +81,7 @@ public class UserOrder {
             sb.append(item.toString() + "\n");
         }
 
-        sb.append("Total Price: $" + this.totalPrice + "\n" +
+        sb.append("Total Price: $" + String.format("%.2f", this.totalPrice) + "\n" +
                 "Total Price : $" + String.format("%.2f", (this.totalPrice + this.deliveryCost))
                 + " (Delivery cost included)\n" + "Status: ");
 

@@ -22,6 +22,10 @@ public class DeliveryCostCommand implements Command {
             return "You have not set any order. Please use /orderfrom or /orderto first!";
         }
 
+        if (co.getExceedTimeLimitStatus()) {
+            return "Time's already up! You can't add delivery cost anymore!";
+        }
+
         co.setDeliveryCost(Double.valueOf(deliveryCost));
         return "Successfully adding the delivery cost!";
     }

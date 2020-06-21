@@ -14,6 +14,11 @@ public class RemoveAllCommand implements Command {
 
     @Override
     public String execute() {
+
+        if (co.getExceedTimeLimitStatus()) {
+            return "Time's already up! You can't add items anymore!";
+        }
+
         try {
             co.deleteAllOrderFromUser(telegram_id);
             return "Successfully removing all the orders!";

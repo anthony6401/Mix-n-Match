@@ -20,6 +20,10 @@ public class RemoveCommand implements Command {
             return "You have not set any order. Please use /orderfrom or /orderto first!";
         }
 
+        if (co.getExceedTimeLimitStatus()) {
+            return "Time's already up! You can't remove items anymore!";
+        }
+
         boolean notFound = false;
         StringBuilder sb = new StringBuilder();
         sb.append("This items can't be found:\n");

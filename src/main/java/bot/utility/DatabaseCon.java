@@ -96,15 +96,16 @@ public class DatabaseCon {
     public String getHistory(Integer telegram_id) {
         try {
             int userID = getUserID(telegram_id);
-            ResultSet rs = stmtUser.executeQuery("SELECT order_from, order_to\n" +
+            ResultSet rs = stmtUser.executeQuery("SELECT date, order_from, order_to\n" +
                     "FROM history\n" +
                     "WHERE user_id = " + userID);
 
             StringBuilder sb = new StringBuilder();
 
             while (rs.next()) {
-                sb.append("Ordered from " + rs.getString(1) +
-                        " to " + rs.getString(2) + "\n");
+                sb.append("Ordered from " + rs.getString(2) +
+                        " to " + rs.getString(3) + " on "
+                        + rs.getString(1) + "\n");
             }
 
             return sb.toString().trim();
@@ -127,17 +128,13 @@ public class DatabaseCon {
         }
     }
 
-    public boolean addHistory(Integer telegram_id, String from, String to) {
+    public boolean addHistory(String date, Integer telegram_id, String from, String to) {
         try {
             int userID = getUserID(telegram_id);
             if (userID != -1) {
-                System.out.println("INSERT INTO history\n" +
-                        "VALUES (DEFAULT, " + userID + ", \"" + from + "\", \"" + to + "\")");
                 stmtUser.execute("INSERT INTO history\n" +
-                        "VALUES (DEFAULT, " + userID + ", \"" + from + "\", \"" + to + "\")");
-
-
-
+                        "VALUES (DEFAULT, " + userID + ", \"" + date + "\", \"" +
+                        from + "\", \"" + to + "\")");
                 return true;
             }
 
@@ -167,27 +164,7 @@ public class DatabaseCon {
         return result;
     }
 
-    public UserInfo getUserInfo(String username) {
-        try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Status, Telegram_id, Longitude, Latitude\n" +
-                    "FROM user\n" +
-                    "WHERE Telegram_username = \"" + username + "\"");
-
-            while (rs.next()) {
-                if (rs.getInt(1) == 1) {
-                    return new UserInfo(rs.getLong(2), rs.getDouble(3)
-                            , rs.getDouble(4));
-                }
-            }
-
-            return null;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-        public boolean updateOnline(String telegramCode) {
+    public boolean updateOnline(String telegramCode) {
         try {
             stmtUser.execute("UPDATE user\n" +
                     "SET status = 1\n" +
@@ -431,13 +408,5 @@ public class DatabaseCon {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static void main(String[] args) {
-        //testing purposes
-        DatabaseCon db = new DatabaseCon();
-//        db.initializeRestaurantDatabase();
-        db.addHistory(8666312, "KOI", "SMAK 4 Penabur");
-
     }
 }

@@ -24,6 +24,11 @@ public class AddCommand implements Command {
         if (co.getFrom() == null) {
             return "Please specify where do you want to order from before adding orders!";
         }
+
+        if (co.getExceedTimeLimitStatus()) {
+            return "Time's already up! You can't add items anymore!";
+        }
+
         boolean notFound = false;
         StringBuilder sb = new StringBuilder();
         sb.append("This items can't be found:\n");

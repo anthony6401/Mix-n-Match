@@ -1,8 +1,5 @@
 import bot.command.*;
-import bot.utility.BotIdentity;
-import bot.utility.ClientOrder;
-import bot.utility.DatabaseCon;
-import bot.utility.StringSplitter;
+import bot.utility.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -38,7 +35,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
         Command command = null;
 
-        if (commandString.equals("/help")) {
+        if (commandString.startsWith("/help")) {
             command = new HelpCommand();
         } else if (chat_id < 0) {
             // Checking if the user is login or not.
@@ -46,59 +43,57 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 command = new UserIsOfflineCommand();
             } else {
                 // orderfrom command
-                if (commandString.equals("/orderfrom")) {
+                if (commandString.startsWith("/orderfrom")) {
                     command = new OrderFromCommand(map, arg, chat_id);
                 // orderto command
-                } else if (commandString.equals("/orderto")) {
+                } else if (commandString.startsWith("/orderto")) {
                     command = new OrderToCommand(map, arg, chat_id);
-                } else if (commandString.equals("/orderstatus")) {
+                } else if (commandString.startsWith("/orderstatus")) {
                     ClientOrder co = map.get(chat_id);
                     command = new CheckOrderStatusCommand(co);
-                } else if (commandString.equals("/invitelink")) {
+                } else if (commandString.startsWith("/invitelink")) {
                     command = new InviteLinkCommand(map, arg, chat_id);
-                } else if (commandString.equals("/settime")) {
+                } else if (commandString.startsWith("/settime")) {
                     command = new SetTimeCommand(map, arg, chat_id);
-                } else if (commandString.equals("/finalizeorder")) {
+                } else if (commandString.startsWith("/finalizeorder")) {
                     Integer time = update.getMessage().getDate();
                     String username = update.getMessage().getFrom().getUserName();
                     ClientOrder co = map.get(chat_id);
                     command = new FinalizeOrderCommand(username, telegram_id, chat_id, time, co);
-                } else if (commandString.equals("/reset")) {
+                } else if (commandString.startsWith("/reset")) {
                     command = new ResetCommand(map, chat_id);
-                } else if (commandString.equals("/categorylist")) {
+                } else if (commandString.startsWith("/categorylist")) {
                     command = new CategoryListCommand();
-                } else if (commandString.equals("/restaurantlist")) {
+                } else if (commandString.startsWith("/restaurantlist")) {
                     command = new RestaurantListCommand(arg);
-                } else if (commandString.equals("/menu")) {
+                } else if (commandString.startsWith("/menu")) {
                     command = new MenuCommand(arg);
-                } else if (commandString.equals("/searchrestaurant")) {
+                } else if (commandString.startsWith("/searchrestaurant")) {
                     command = new SearchRestaurantCommand(arg);
-                } else if (commandString.equals("/add")) {
+                } else if (commandString.startsWith("/add")) {
                     ClientOrder co = map.get(chat_id);
                     command = new AddCommand(arg, telegram_id, co);
-                } else if (commandString.equals("/remove")) {
+                } else if (commandString.startsWith("/remove")) {
                     ClientOrder co = map.get(chat_id);
                     command = new RemoveCommand(arg, telegram_id, co);
-                } else if (commandString.equals("/removeall")) {
+                } else if (commandString.startsWith("/removeall")) {
                     ClientOrder co = map.get(chat_id);
                     command = new RemoveAllCommand(telegram_id, co);
-                } else if (commandString.equals("/deliverycost")) {
+                } else if (commandString.startsWith("/deliverycost")) {
                     ClientOrder co = map.get(chat_id);
                     command = new DeliveryCostCommand(arg, co);
-                } else if (commandString.equals("/commandlist")) {
+                } else if (commandString.startsWith("/commandlist")) {
                     command = new CommandListCommand();
-                } else if (commandString.equals("/orderee")) { // not yet
+                } else if (commandString.startsWith("/verifyuser")) {
                     ClientOrder co = map.get(chat_id);
-                    command = new OrdereeCommand("abc", co);
-                } else if (commandString.equals("/verifyuser")) { // not yet
-                    command = new VerifyUserCommand();
-                } else if (commandString.equals("/unverifyuser")) { // not yet
-                    command = new UnverifyUserCommand();
-                } else if (commandString.equals("/exitgroup")) { // not yet
-                    command = new ExitGroupCommand();
-                } else if (commandString.equals("/seemap")) {
-                    System.out.println(map.toString());
-                } else if (commandString.equals("/history")) {
+                    command = new VerifyUserCommand(arg, telegram_id, co);
+                } else if (commandString.startsWith("/unverifyuser")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new UnverifyUserCommand(arg, telegram_id, co);
+                } else if (commandString.startsWith("/exitgroup")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new ExitGroupCommand(telegram_id, co);
+                } else if (commandString.startsWith("/history")) {
                     String username = update.getMessage().getFrom().getUserName();
                     command = new HistoryCommand(username, telegram_id);
                 } else {
@@ -108,17 +103,17 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         // If the user tries message the bot through private message
         } else if (chat_id > 0) {
             // Start of the bot using the identifier gotten from the website.
-            if (commandString.equals("/start")) {
+            if (commandString.startsWith("/start")) {
                 // If the user tries to use the bot without logging in from the website
                 command = new StartCommand(arg, telegram_id);
                 // Join command
-            } else if (commandString.equals("/join")) {
+            } else if (commandString.startsWith("/join")) {
                 Integer time = update.getMessage().getDate();
                 String username = update.getMessage().getFrom().getUserName();
                 ClientOrder co = map.get(Long.valueOf(arg));
                 command = new JoinCommand(username, telegram_id, time, co);
             // Logout command
-            } else if (commandString.equals("/logout")) {
+            } else if (commandString.startsWith("/logout")) {
                 command = new LogoutCommand(telegram_id);
             // If the user tries to use commands available only on groups
             } else {
@@ -153,11 +148,25 @@ public class MixnMatchBot extends TelegramLongPollingBot {
             }
 
             if (command instanceof FinalizeOrderCommand) {
-                FinalizeOrderCommand foCommand = (FinalizeOrderCommand) command;
-                List<SendMessage> messageList = foCommand.notifyOnlineUser();
+                ClientOrder co = map.get(chat_id);
+                if (co.getStartTime().equals(update.getMessage().getDate())) {
+                    FinalizeOrderCommand foCommand = (FinalizeOrderCommand) command;
+                    List<SendMessage> messageList = foCommand.notifyOnlineUser();
 
-                for (SendMessage msg : messageList) {
-                    sendMessage(msg);
+                    for (SendMessage msg : messageList) {
+                        sendMessage(msg);
+                    }
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            co.setExceedTimeLimitToTrue();
+                            Command timeLimitCommand = new TimeLimitExceedCommand();
+                            String botMessage = timeLimitCommand.execute();
+                            message.setText(botMessage);
+                            sendMessage(message);
+                        }
+                    }, co.getTimeLimit() * DateTime.SECONDS_TO_MILLISECONDS);
                 }
             }
         }
