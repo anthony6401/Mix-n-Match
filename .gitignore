@@ -1,2 +1,2 @@
-src/main/java/BotIdentity.java
-target/classes/BotIdentity.class
+src/main/java/bot/utility/BotIdentity.java
+target/classes/bot/utility/BotIdentity.class
