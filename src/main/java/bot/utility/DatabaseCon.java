@@ -230,7 +230,7 @@ public class DatabaseCon {
     }
 
 
-    public boolean addRestaurant(String name, String category) {
+    public boolean addRestaurant(String name, String category, int restaurant_id) {
         try {
             int categoryId = getCategoryID(category);
             String categoryQuery = "INSERT INTO restaurant_category\n" +
@@ -240,10 +240,12 @@ public class DatabaseCon {
 
             if (!hasRestaurant(name)) {
                 String query = "INSERT INTO restaurant_list\n" +
-                        "VALUES (DEFAULT, \"" + name + "\")";
+                        "VALUES (" + restaurant_id + ", \"" + name + "\")";
 
                 stmtRes.execute(query);
             }
+
+            stmtRes.closeOnCompletion();
             return true;
 
         } catch (SQLException e) {
@@ -360,7 +362,8 @@ public class DatabaseCon {
 
             ResultSet rs = stmtRes.executeQuery("SELECT name, price\n" +
                     "FROM food_list\n" +
-                    "WHERE restaurant_id = " + restaurant_id);
+                    "WHERE restaurant_id = " + restaurant_id + "\n" +
+                    "ORDER BY name");
 
             sb.append(restaurantSearched + "\'s menu:\n");
             while (rs.next()) {

@@ -53,8 +53,10 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new CheckOrderStatusCommand(co);
                 } else if (commandString.startsWith("/invitelink")) {
                     command = new InviteLinkCommand(map, arg, chat_id);
-                } else if (commandString.startsWith("/settime")) {
-                    command = new SetTimeCommand(map, arg, chat_id);
+                } else if (commandString.startsWith("/ordertime")) {
+                    command = new OrderTimeCommand(map, arg, chat_id);
+                } else if (commandString.startsWith("/paymenttime")) {
+                    command = new PaymentTimeCommand(map, arg, chat_id);
                 } else if (commandString.startsWith("/finalizeorder")) {
                     Integer time = update.getMessage().getDate();
                     String username = update.getMessage().getFrom().getUserName();
@@ -147,26 +149,49 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 sendMessage(message);
             }
 
+            // Notification purposes
             if (command instanceof FinalizeOrderCommand) {
                 ClientOrder co = map.get(chat_id);
+
+                // If the finalize order command is the first one
                 if (co.getStartTime().equals(update.getMessage().getDate())) {
                     FinalizeOrderCommand foCommand = (FinalizeOrderCommand) command;
                     List<SendMessage> messageList = foCommand.notifyOnlineUser();
 
+                    // Sending the message to everyone near to where the order is
                     for (SendMessage msg : messageList) {
                         sendMessage(msg);
                     }
+
+                    // To send a message that for the order is up and proceed to payment
+
+                    // Sending the message for the payment order is up
                     Timer timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            co.setExceedTimeLimitToTrue();
-                            Command timeLimitCommand = new TimeLimitExceedCommand();
-                            String botMessage = timeLimitCommand.execute();
+                            co.setExceedOrderTimeLimitToTrue();
+                            Command orderTimeLimitCommand = new OrderTimeLimitExceedCommand(co);
+                            String botMessage = orderTimeLimitCommand.execute();
                             message.setText(botMessage);
                             sendMessage(message);
+
+                            // Sending the message for the payment period is up
+                            Timer timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    co.setExceedPaymentTimeLimitToTrue();
+                                    Command paymentTimeLimitCommand = new PaymentTimeLimitExceedCommand();
+                                    String botMessage = paymentTimeLimitCommand.execute();
+                                    message.setText(botMessage);
+                                    sendMessage(message);
+                                }
+                            },  co.getPaymentTimeLimit() * DateTime.SECONDS_TO_MILLISECONDS);
+
+
                         }
-                    }, co.getTimeLimit() * DateTime.SECONDS_TO_MILLISECONDS);
+                    }, co.getOrderTimeLimit() * DateTime.SECONDS_TO_MILLISECONDS);
                 }
             }
         }

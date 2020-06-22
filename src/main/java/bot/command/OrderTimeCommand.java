@@ -5,13 +5,13 @@ import bot.utility.DateTime;
 
 import java.util.Map;
 
-public class SetTimeCommand implements Command {
+public class OrderTimeCommand implements Command {
     private final Map<Long, ClientOrder> map;
     private final String timeLimit; // In minutes
     private final long chat_id;
 
 
-    public SetTimeCommand(Map<Long, ClientOrder> map, String timeLimit, long chat_id) {
+    public OrderTimeCommand(Map<Long, ClientOrder> map, String timeLimit, long chat_id) {
         this.map = map;
         this.timeLimit = timeLimit;
         this.chat_id = chat_id;
@@ -20,7 +20,7 @@ public class SetTimeCommand implements Command {
     @Override
     public String execute() {
         if (timeLimit == null) {
-            return "You did not specify any time limit. Please type it in the format /settime [time limit]!";
+            return "You did not specify any order time limit. Please type it in the format /ordertime [time limit]!";
         }
 
         try {
@@ -29,16 +29,16 @@ public class SetTimeCommand implements Command {
                 if (co.getFinalizeStatus()) {
                     return "You have finalize your order! If you want to reset, please make another group!";
                 }
-                co.setTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
+                co.setOrderTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
             } else {
                 ClientOrder co = new ClientOrder();
-                co.setTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
+                co.setOrderTimeLimit(Integer.valueOf(timeLimit) * DateTime.MINUTES_TO_SECONDS); // Change into seconds
                 this.map.put(chat_id, co);
             }
         } catch (NumberFormatException e) {
             return "Invalid time! Please don't use \".\" and \",\"!";
         }
 
-        return "Successfully adding the time limit!";
+        return "Successfully adding the order time limit!";
     }
 }

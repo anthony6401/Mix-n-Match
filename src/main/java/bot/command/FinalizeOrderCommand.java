@@ -52,9 +52,14 @@ public class FinalizeOrderCommand implements Command {
             sb.append("To where you want to order. Please use /orderto [place name]\n");
         }
 
-        if (co.getTimeLimit() == null) {
+        if (co.getOrderTimeLimit() == null) {
             error = true;
-            sb.append("The time limit of the order. Please use /settime [time limit]");
+            sb.append("The order time limit of the order. Please use /ordertime [time limit]");
+        }
+
+        if (co.getPaymentTimeLimit() == null) {
+            error = true;
+            sb.append("The payment time limit of the order. Please use /paymenttime [time limit]");
         }
 
         if (error) {

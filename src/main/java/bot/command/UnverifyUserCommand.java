@@ -23,7 +23,11 @@ public class UnverifyUserCommand implements Command {
             return "You have not set any order. Please use /orderfrom or /orderto first!";
         }
 
-        if (co.getExceedTimeLimitStatus()) {
+        if (!co.getExceedTimeLimitStatus()) {
+            return "This is still in the order period! You can only verify on payment period.";
+        }
+
+        if (co.getExceedPaymentTimeLimitStatus()) {
             return "Time's already up! You can't unverify other people's payment anymore!";
         }
 

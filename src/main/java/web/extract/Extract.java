@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class Extract {
+    public DatabaseCon db = new DatabaseCon();
 
     public List<Item> getFoodInfo(String url) {
         List<Item> result = new ArrayList<>();
@@ -71,7 +72,7 @@ public class Extract {
                 HtmlSpan span = element.getFirstByXPath("figure/figcaption/span/span");
 
                 if (URL.contains("/chain/") || URL.contains("/restaurant/")) {
-                    String name = span.asText().replaceAll("\\(.*\\)", "");
+                    String name = span.asText().replaceAll("\\(.*\\)", "").trim();
                     if (URL.startsWith("http")) {
                         result.add(new Pair(name, URL));
                     } else {
@@ -107,7 +108,7 @@ public class Extract {
                 String URL = anchor.getAttribute("href");
                 String category = anchor.asText();
 
-                if (!category.equals("Flowers")) {
+                if (!category.equals("Flowers") && !category.equals("Groceries")) {
                     result.add(new Pair(category, URL));
                 }
             }
@@ -120,14 +121,11 @@ public class Extract {
         return result;
     }
 
-    public CompletableFuture<Boolean> addRestaurantAndFoodInfo(String name, String url, String category) {
+    public CompletableFuture<Boolean> addRestaurantAndFoodInfo(String name, String url,
+                                                               String category, int restaurant_id) {
         return CompletableFuture.supplyAsync(() -> {
-            DatabaseCon db = new DatabaseCon();
-
-            boolean toAddFood = db.addRestaurant(name, category);
+            boolean toAddFood = db.addRestaurant(name, category, restaurant_id);
             if (toAddFood) {
-                int restaurant_id = db.getRestaurantID(name);
-
                 try {
                     List<Item> items = getFoodInfo(url);
                     if (items.size() != 0) {
@@ -146,6 +144,7 @@ public class Extract {
 
     public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
+        int restaurant_id = 1;
         List<Pair> categories = getCategory(foodPandaURL);
         for (Pair category : categories) {
             String cat = category.getName();
@@ -160,10 +159,10 @@ public class Extract {
                 String url = pair.getURL();
                 System.out.println(restaurantName);
 
-                if (!restaurantName.startsWith("pandamart")) {
-                    CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantName, url, cat);
-                    async.add(addInfo);
-                }
+                CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantName, url,
+                        cat, restaurant_id);
+                restaurant_id++;
+                async.add(addInfo);
             }
 
             CompletableFuture.allOf(async.toArray(new CompletableFuture[0])).join();

@@ -9,7 +9,13 @@ public class HelpCommand implements Command {
     @Override
     public String execute() {
         return "Welcome to Mix n Match Bot!\n" +
-                "This bot helps to collate people who want to order from the same restaurant to a certain location.\n\n" +
+                "This bot helps to collate people who want to order from the same restaurant to a certain location.\n" +
+                "The one who starts the order (orderee) will take all the payments and order the food through foodPanda" +
+                "or other platforms.\n\n" +
+                "There are 2 periods, the first period will be order period and the next one will be payment period.\n" +
+                "During the order period, the user can add and remove orders.\n" +
+                "During the payment period, the orderee " +
+                "can verify/unverify other's user payment and add the delivery cost.\n\n" +
                 "Here is the step by step guide on how to use the bot:\n" +
                 "1. Create an account from the website.\n" +
                 "2. Press the telegram link given after creating an account.\n" +

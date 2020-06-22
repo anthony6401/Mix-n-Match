@@ -2,44 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b8b5f7a0-0445-4522-903c-54a9a2518a02" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/bot/command/TimeLimitExceedCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/bot/utility/UserStatus.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bot/command/PaymentTimeCommand.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bot/command/PaymentTimeLimitExceedCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/MixnMatchBot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/WebExtraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/WebExtraction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/AddCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/AddCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/DeliveryCostCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/DeliveryCostCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/ExitGroupCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/ExitGroupCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/CommandListCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/CommandListCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/FinalizeOrderCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/FinalizeOrderCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/OrdereeCommand.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/RemoveAllCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/RemoveAllCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/RemoveCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/RemoveCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/SetTimeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/SetTimeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/HelpCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/HelpCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/SetTimeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/OrderTimeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/TimeLimitExceedCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/OrderTimeLimitExceedCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/UnverifyUserCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/UnverifyUserCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/VerifyUserCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/VerifyUserCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/ClientOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/ClientOrder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/DatabaseCon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/DatabaseCon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/DateTime.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/DateTime.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/Notification.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/Notification.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/UserOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/UserOrder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/web/extract/Extract.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/web/extract/Extract.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/MixnMatchBot.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/ExitGroupCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/ExitGroupCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/CommandListCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/CommandListCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/bot/command/FinalizeOrderCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/FinalizeOrderCommand.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/OrdereeCommand.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/SetTimeCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/SetTimeCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/HelpCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/HelpCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/SetTimeCommand.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/command/TimeLimitExceedCommand.class" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/bot/command/UnverifyUserCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/UnverifyUserCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/bot/command/VerifyUserCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/command/VerifyUserCommand.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/ClientOrder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/ClientOrder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/DatabaseCon.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/DatabaseCon.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/DateTime.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/DateTime.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/Notification.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/Notification.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/StringSplitter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/StringSplitter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/UserOrder$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/UserOrder$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/UserOrder$UserStatus.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/UserOrder.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/UserOrder.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/web/extract/Extract.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/web/extract/Extract.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -106,13 +95,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Notification" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="bot.utility.Notification" />
-      <module name="mixnmatch" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="StringSplitter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="bot.utility.StringSplitter" />
       <module name="mixnmatch" />
@@ -133,13 +115,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="WebExtraction" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="WebExtraction" />
+      <module name="mixnmatch" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.ExecuteBot" />
+        <item itemvalue="Application.WebExtraction" />
+        <item itemvalue="Application.DatabaseCon" />
         <item itemvalue="Application.VerifyUserCommand" />
         <item itemvalue="Application.StringSplitter" />
-        <item itemvalue="Application.DatabaseCon" />
-        <item itemvalue="Application.Notification" />
       </list>
     </recent_temporary>
   </component>

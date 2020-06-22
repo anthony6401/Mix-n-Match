@@ -7,9 +7,11 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
     private String from;
     private String to;
     private String inviteLink;
-    private Integer timeLimit; // In seconds
+    private Integer orderTimeLimit; // In seconds
+    private Integer paymentTimeLimit; // in seconds
     private Integer startTime;
-    private boolean exceedTimeLimit;
+    private boolean exceedOrderTimeLimit;
+    private boolean exceedPaymentTimeLimit;
     private double deliveryCost;
     public int numberOfPeople;
     private boolean finalizeStatus;
@@ -32,15 +34,23 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
 
     public String getInviteLink() {return this.inviteLink; };
 
-    public Integer getTimeLimit() {
-        return this.timeLimit;
+    public Integer getOrderTimeLimit() {
+        return this.orderTimeLimit;
     }
 
-    public boolean getExceedTimeLimitStatus() { return this.exceedTimeLimit; };
+    public Integer getPaymentTimeLimit() {
+        return this.paymentTimeLimit;
+    }
+
+    public boolean getExceedTimeLimitStatus() { return this.exceedOrderTimeLimit; };
+
+    public boolean getExceedPaymentTimeLimitStatus() { return this.exceedPaymentTimeLimit; };
 
     public Integer getStartTime() {
         return this.startTime;
     }
+
+    public String getMobileNumber() { return this.mobileNumber; };
 
     public ClientOrder setFrom(String from) {
         this.from = from;
@@ -53,8 +63,13 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
         return this;
     }
 
-    public ClientOrder setExceedTimeLimitToTrue() {
-        this.exceedTimeLimit = true;
+    public ClientOrder setExceedOrderTimeLimitToTrue() {
+        this.exceedOrderTimeLimit = true;
+        return this;
+    }
+
+    public ClientOrder setExceedPaymentTimeLimitToTrue() {
+        this.exceedPaymentTimeLimit = true;
         return this;
     }
 
@@ -77,8 +92,13 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
         return this;
     }
 
-    public ClientOrder setTimeLimit(Integer timeLimit) {
-        this.timeLimit = timeLimit;
+    public ClientOrder setOrderTimeLimit(Integer orderTimeLimit) {
+        this.orderTimeLimit = orderTimeLimit;
+        return this;
+    }
+
+    public ClientOrder setPaymentTimeLimit(Integer paymentTimeLimit) {
+        this.paymentTimeLimit = paymentTimeLimit;
         return this;
     }
 
@@ -93,7 +113,7 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
     }
 
     public boolean isWithinTimeLimit(long time) {
-        return time - startTime <= timeLimit;
+        return time - startTime <= orderTimeLimit;
     }
 
     public ClientOrder addUser(Integer telegram_id, String username) {
@@ -174,7 +194,13 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
         }
 
         if (startTime != null) {
-            sb.append("End at: " + DateTime.unixTimeToDate(startTime + timeLimit));
+            sb.append("Order end at: " +
+                    DateTime.unixTimeToDate(startTime + orderTimeLimit) + "\n");
+        }
+
+        if (paymentTimeLimit != null) {
+            sb.append("Payment end at: " +
+                    DateTime.unixTimeToDate(startTime + orderTimeLimit + paymentTimeLimit));
         }
 
         if (from == null) {

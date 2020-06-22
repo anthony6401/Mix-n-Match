@@ -1,9 +1,6 @@
 package bot.utility;
 
 import bot.command.Command;
-import bot.utility.ClientOrder;
-import bot.utility.DateTime;
-import bot.utility.PlaceInfo;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +20,10 @@ public class Notification {
     public List<SendMessage> notifyUser() {
         String botMessage = "Someone is ordering from " + co.getFrom() + " to " + co.getTo() + ".\n" +
                 "To join the group, please type /join " + chat_id + "\n" +
-                "The group order ended at " + DateTime.unixTimeToDate(co.getStartTime() + co.getTimeLimit());
+                "The group order ended at " +
+                DateTime.unixTimeToDate(co.getStartTime() + co.getOrderTimeLimit()) + "\n" +
+                "The group payment ended at " +
+                DateTime.unixTimeToDate(co.getStartTime() + co.getOrderTimeLimit() + co.getPaymentTimeLimit());
 
         List<SendMessage> result = new ArrayList<>();
 
