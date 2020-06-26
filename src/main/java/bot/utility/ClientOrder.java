@@ -6,6 +6,7 @@ import java.util.Map;
 public class ClientOrder extends HashMap<Integer, UserOrder> {
     private String from;
     private String to;
+    private String deliveryHours;
     private String inviteLink;
     private Integer orderTimeLimit; // In seconds
     private Integer paymentTimeLimit; // in seconds
@@ -54,12 +55,16 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
 
     public ClientOrder setFrom(String from) {
         this.from = from;
-        deleteAllOrder();
         return this;
     }
 
     public ClientOrder setTo(String to) {
         this.to = to;
+        return this;
+    }
+
+    public ClientOrder setDeliveryHours(String deliveryHours) {
+        this.deliveryHours = deliveryHours;
         return this;
     }
 
@@ -178,6 +183,7 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
         }
 
         StringBuilder sb = new StringBuilder();
+        sb.append("Delivery hours: " + deliveryHours + "\n\n");
         for (Map.Entry<Integer, UserOrder> entry : entrySet()) {
             UserOrder uo = entry.getValue();
             sb.append(uo.getUsername() + "'s orders:\n");

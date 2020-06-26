@@ -1,19 +1,19 @@
 package bot.utility;
 
 public class Pair {
-    private String name;
-    private String URL;
+    private final String first;
+    private final String second;
 
-    public Pair(String name, String URL) {
-        this.name = name;
-        this.URL = URL;
+    public Pair(String first, String second) {
+        this.first = first;
+        this.second = second;
     }
 
-    public String getName() {
-        return this.name;
+    public String getFirst() {
+        return this.first;
     }
 
-    public String getURL() {
-        return this.URL;
+    public String getSecond() {
+        return this.second;
     }
 }

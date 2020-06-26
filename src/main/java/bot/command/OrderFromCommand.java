@@ -1,6 +1,7 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
+import bot.utility.Pair;
 
 import java.util.Map;
 
@@ -22,7 +23,9 @@ public class OrderFromCommand implements Command {
             return "You did not specify where you want to order from!";
         }
 
-        String restaurant =  db.orderFromSearch(arg);
+        Pair pair =  db.orderFromSearch(arg);
+        String restaurant = pair.getFirst();
+        String deliveryHours = pair.getSecond();
 
         if (restaurant.startsWith("No restaurant found")) {
             return restaurant;
@@ -33,9 +36,11 @@ public class OrderFromCommand implements Command {
                     return "You have finalize your order! If you want to reset, please make another group!";
                 }
                 co.setFrom(restaurant);
+                co.setDeliveryHours(deliveryHours);
             } else {
                 ClientOrder co = new ClientOrder();
                 co.setFrom(restaurant);
+                co.setDeliveryHours(deliveryHours);
                 this.map.put(chat_id, co);
             }
 

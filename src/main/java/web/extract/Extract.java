@@ -1,51 +1,70 @@
 package web.extract;
 
+import bot.utility.CategoryInfo;
 import bot.utility.DatabaseCon;
-import bot.utility.Item;
-import bot.utility.Pair;
+import bot.utility.ItemForDB;
+import bot.utility.RestaurantInfo;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import com.gargoylesoftware.htmlunit.html.*;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class Extract {
+    private WebClient client;
     public DatabaseCon db = new DatabaseCon();
 
-    public List<Item> getFoodInfo(String url) {
-        List<Item> result = new ArrayList<>();
+    public Extract() {
         WebClient client = new WebClient();
-
         client.setJavaScriptEnabled(false);
         client.setCssEnabled(false);
-
         try {
             client.setUseInsecureSSL(true);
+            this.client = client;
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public List<ItemForDB> getFoodInfo(String url) {
+        List<ItemForDB> result = new ArrayList<>();
+        try {
             HtmlPage page = client.getPage(url);
+
             List<HtmlElement> items = (List<HtmlElement>) page.getByXPath("//li[contains(@class, 'dish-card')]");
 
             if (items.isEmpty()) {
                 System.out.println("No items found");
             } else {
                 for (HtmlElement element : items) {
+                    HtmlParagraph descParagraph = element.getFirstByXPath("div/div/div/p");
+                    HtmlElement imageElement = element.getFirstByXPath("div/div/picture");
                     HtmlSpan name = element.getFirstByXPath("div/div/div/h3/span");
                     HtmlSpan price = element.getFirstByXPath("div/section/div/span");
+
+                    String desc = null;
+                    if (descParagraph != null) {
+                        desc = descParagraph.asText();
+                    }
+                    String imageURL = null;
+                    if (imageElement != null) {
+                        imageURL = ((HtmlElement) imageElement.getFirstByXPath("div"))
+                                .getAttribute("data-src");
+                    }
                     String sPrice = price.asText();
                     float priceNumber = Float.valueOf(sPrice.split("\\$")[1]);
 
-                    Item item = new Item(name.asText(), priceNumber);
+                    ItemForDB item = new ItemForDB(name.asText(), priceNumber, desc, imageURL);
                     result.add(item);
                 }
             }
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -55,15 +74,10 @@ public class Extract {
         return result;
     }
 
-    public List<Pair> getRestaurantInfo(String url) {
-        List<Pair> result = new ArrayList<>();
-        WebClient client = new WebClient();
-
-        client.setJavaScriptEnabled(false);
-        client.setCssEnabled(false);
+    public List<RestaurantInfo> getRestaurantInfo(String url) {
+        List<RestaurantInfo> result = new ArrayList<>();
 
         try {
-            client.setUseInsecureSSL(true);
             HtmlPage page = client.getPage(url);
             List<HtmlElement> URLs = (List<HtmlElement>) page.getByXPath("//li/a");
 
@@ -74,28 +88,35 @@ public class Extract {
                 if (URL.contains("/chain/") || URL.contains("/restaurant/")) {
                     String name = span.asText().replaceAll("\\(.*\\)", "").trim();
                     if (URL.startsWith("http")) {
-                        result.add(new Pair(name, URL));
                     } else {
-                        result.add(new Pair(name, "https://www.foodpanda.sg" + URL));
+                        URL = "https://www.foodpanda.sg" + URL;
                     }
+                    System.out.println(URL);
+                    HtmlPage pageDeliveryHours = client.getPage(URL + "#restaurant-info");
+                    HtmlElement deliveryHoursElement = pageDeliveryHours
+                            .getFirstByXPath("//ul[@class=\"vendor-delivery-times\"]/li");
+                    String deliveryHours = null;
+
+                    if (deliveryHoursElement != null) {
+                        deliveryHours = deliveryHoursElement.asText();
+                    }
+
+                    result.add(new RestaurantInfo(name, URL, deliveryHours));
                 }
             }
-        } catch (GeneralSecurityException | IOException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (FailingHttpStatusCodeException e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    public List<Pair> getCategory(String url) {
-        List<Pair> result = new ArrayList<>();
-        WebClient client = new WebClient();
-
-        client.setJavaScriptEnabled(false);
-        client.setCssEnabled(false);
+    public List<CategoryInfo> getCategory(String url) {
+        List<CategoryInfo> result = new ArrayList<>();
 
         try {
-            client.setUseInsecureSSL(true);
             HtmlPage page = client.getPage(url);
             //getting all the URLs category from FoodPanda
             List<HtmlElement> categories = (List<HtmlElement>) page.getByXPath("//div[contains(@class, " +
@@ -109,12 +130,12 @@ public class Extract {
                 String category = anchor.asText();
 
                 if (!category.equals("Flowers") && !category.equals("Groceries")) {
-                    result.add(new Pair(category, URL));
+                    result.add(new CategoryInfo(category, URL));
                 }
             }
 
 
-        } catch (GeneralSecurityException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -122,14 +143,15 @@ public class Extract {
     }
 
     public CompletableFuture<Boolean> addRestaurantAndFoodInfo(String name, String url,
-                                                               String category, int restaurant_id) {
+                                                               int category_id, int restaurant_id,
+                                                               String deliveryHours) {
         return CompletableFuture.supplyAsync(() -> {
-            boolean toAddFood = db.addRestaurant(name, category, restaurant_id);
+            boolean toAddFood = db.addRestaurant(name, restaurant_id, category_id, deliveryHours);
             if (toAddFood) {
                 try {
-                    List<Item> items = getFoodInfo(url);
+                    List<ItemForDB> items = getFoodInfo(url);
                     if (items.size() != 0) {
-                        for (Item item : items) {
+                        for (ItemForDB item : items) {
                             db.addFoodInfo(item, restaurant_id);
 
                         }
@@ -145,27 +167,39 @@ public class Extract {
     public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
         int restaurant_id = 1;
-        List<Pair> categories = getCategory(foodPandaURL);
-        for (Pair category : categories) {
-            String cat = category.getName();
+        int category_id = 1;
+        List<CategoryInfo> categories = getCategory(foodPandaURL);
+        for (CategoryInfo category : categories) {
+            String cat = category.getCategory();
             String URL = category.getURL();
 
-            db.addCategory(cat);
-            List<Pair> pairs = getRestaurantInfo(URL);
+            db.addCategory(cat, category_id);
+            List<RestaurantInfo> restaurantInfos = getRestaurantInfo(URL);
             List<CompletableFuture<Boolean>> async = new ArrayList<>();
 
-            for (Pair pair : pairs) {
-                String restaurantName = pair.getName();
-                String url = pair.getURL();
-                System.out.println(restaurantName);
-
+            for (RestaurantInfo restaurantInfo : restaurantInfos) {
+                String restaurantName = restaurantInfo.getRestaurantName();
+                String url = restaurantInfo.getURL();
+                String deliveryHours = restaurantInfo.getDeliveryHours();
                 CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantName, url,
-                        cat, restaurant_id);
+                        category_id, restaurant_id, deliveryHours);
                 restaurant_id++;
                 async.add(addInfo);
+
             }
 
-            CompletableFuture.allOf(async.toArray(new CompletableFuture[0])).join();
+            category_id++;
+            try {
+                CompletableFuture.allOf(async.toArray(new CompletableFuture[0])).join();
+            } catch (CompletionException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public static void main(String[] args) {
+        Extract ex = new Extract();
+        ex.getFoodInfo("https://www.foodpanda.sg/restaurant/s1fv/cafe-etc#");
+
     }
 }

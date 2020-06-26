@@ -3,8 +3,10 @@ import bot.utility.*;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 import java.util.*;
@@ -37,6 +39,21 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
         if (commandString.startsWith("/help")) {
             command = new HelpCommand();
+        } else if (commandString.startsWith("/categorylist")) {
+            command = new CategoryListCommand();
+        } else if (commandString.startsWith("/restaurantlist")) {
+            command = new RestaurantListCommand(arg);
+        } else if (commandString.startsWith("/menu")) {
+            command = new MenuCommand(arg);
+        } else if (commandString.startsWith("/searchrestaurant")) {
+            command = new SearchRestaurantCommand(arg);
+        } else if (commandString.startsWith("/commandlist")) {
+            command = new CommandListCommand();
+        } else if (commandString.startsWith("/foodinfo")) {
+            command = new FoodInfoCommand(arg, chat_id);
+        } else if (commandString.startsWith("/history")) {
+            String username = update.getMessage().getFrom().getUserName();
+            command = new HistoryCommand(username, telegram_id);
         } else if (chat_id < 0) {
             // Checking if the user is login or not.
             if (!db.isOnline(telegram_id)) {
@@ -50,7 +67,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new OrderToCommand(map, arg, chat_id);
                 } else if (commandString.startsWith("/orderstatus")) {
                     ClientOrder co = map.get(chat_id);
-                    command = new CheckOrderStatusCommand(co);
+                    command = new CheckOrderStatusCommand(co, chat_id);
                 } else if (commandString.startsWith("/invitelink")) {
                     command = new InviteLinkCommand(map, arg, chat_id);
                 } else if (commandString.startsWith("/ordertime")) {
@@ -64,14 +81,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new FinalizeOrderCommand(username, telegram_id, chat_id, time, co);
                 } else if (commandString.startsWith("/reset")) {
                     command = new ResetCommand(map, chat_id);
-                } else if (commandString.startsWith("/categorylist")) {
-                    command = new CategoryListCommand();
-                } else if (commandString.startsWith("/restaurantlist")) {
-                    command = new RestaurantListCommand(arg);
-                } else if (commandString.startsWith("/menu")) {
-                    command = new MenuCommand(arg);
-                } else if (commandString.startsWith("/searchrestaurant")) {
-                    command = new SearchRestaurantCommand(arg);
                 } else if (commandString.startsWith("/add")) {
                     ClientOrder co = map.get(chat_id);
                     command = new AddCommand(arg, telegram_id, co);
@@ -84,8 +93,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.startsWith("/deliverycost")) {
                     ClientOrder co = map.get(chat_id);
                     command = new DeliveryCostCommand(arg, co);
-                } else if (commandString.startsWith("/commandlist")) {
-                    command = new CommandListCommand();
                 } else if (commandString.startsWith("/verifyuser")) {
                     ClientOrder co = map.get(chat_id);
                     command = new VerifyUserCommand(arg, telegram_id, co);
@@ -95,9 +102,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.startsWith("/exitgroup")) {
                     ClientOrder co = map.get(chat_id);
                     command = new ExitGroupCommand(telegram_id, co);
-                } else if (commandString.startsWith("/history")) {
-                    String username = update.getMessage().getFrom().getUserName();
-                    command = new HistoryCommand(username, telegram_id);
                 } else {
                     command = new NotACommand();
                 }
@@ -108,7 +112,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
             if (commandString.startsWith("/start")) {
                 // If the user tries to use the bot without logging in from the website
                 command = new StartCommand(arg, telegram_id);
-                // Join command
+            // Join command
             } else if (commandString.startsWith("/join")) {
                 Integer time = update.getMessage().getDate();
                 String username = update.getMessage().getFrom().getUserName();
@@ -145,8 +149,20 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 }
             // BotMessage is short enough to be sent from the telegram bot
             } else {
-                message.setText(botMessage);
-                sendMessage(message);
+                if (command instanceof FoodInfoCommand) {
+                    FoodInfoCommand fiCommand = (FoodInfoCommand) command;
+                    if (fiCommand.isSendPic()) {
+                        SendPhoto photoMessage = fiCommand.getPhotoMessage();
+                        photoMessage.setCaption(botMessage);
+                        sendPhoto(photoMessage);
+                    } else {
+                        message.setText(botMessage);
+                        sendMessage(message);
+                    }
+                } else {
+                    message.setText(botMessage);
+                    sendMessage(message);
+                }
             }
 
             // Notification purposes
@@ -182,7 +198,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                                 @Override
                                 public void run() {
                                     co.setExceedPaymentTimeLimitToTrue();
-                                    Command paymentTimeLimitCommand = new PaymentTimeLimitExceedCommand();
+                                    Command paymentTimeLimitCommand = new PaymentTimeLimitExceedCommand(co);
                                     String botMessage = paymentTimeLimitCommand.execute();
                                     message.setText(botMessage);
                                     sendMessage(message);
@@ -194,6 +210,14 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     }, co.getOrderTimeLimit() * DateTime.SECONDS_TO_MILLISECONDS);
                 }
             }
+        }
+    }
+
+    private void sendPhoto(SendPhoto photoMessage) {
+        try {
+            execute(photoMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 

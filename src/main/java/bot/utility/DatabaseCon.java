@@ -202,8 +202,7 @@ public class DatabaseCon {
         try {
             ResultSet rs = stmtRes.executeQuery("SELECT restaurant_id\n" +
                     "FROM restaurant_list\n" +
-                    "WHERE name = \"" + name + "\"");
-
+                    "WHERE name LIKE \"%" + name + "%\"");
 
             rs.next();
             return rs.getInt(1);
@@ -230,18 +229,25 @@ public class DatabaseCon {
     }
 
 
-    public boolean addRestaurant(String name, String category, int restaurant_id) {
+    public boolean addRestaurant(String name, int restaurant_id,
+                                 int category_id, String deliveryHours) {
         try {
-            int categoryId = getCategoryID(category);
             String categoryQuery = "INSERT INTO restaurant_category\n" +
-                    "VALUES(DEFAULT, \"" + name + "\", " + categoryId + ")";
+                    "VALUES(DEFAULT, \"" + name + "\", " + category_id + ")";
 
             stmtRes.execute(categoryQuery);
 
             if (!hasRestaurant(name)) {
-                String query = "INSERT INTO restaurant_list\n" +
-                        "VALUES (" + restaurant_id + ", \"" + name + "\")";
-
+                String query;
+                if (deliveryHours == null) {
+                    query = "INSERT INTO restaurant_list\n" +
+                            "VALUES (" + restaurant_id + ", \"" + name + "\", " +
+                            "DEFAULT)";
+                } else {
+                    query = "INSERT INTO restaurant_list\n" +
+                            "VALUES (" + restaurant_id + ", \"" + name + "\", \"" +
+                            deliveryHours + "\")";
+                }
                 stmtRes.execute(query);
             }
 
@@ -249,18 +255,32 @@ public class DatabaseCon {
             return true;
 
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
 
     }
 
 
-    public boolean addFoodInfo(Item item, int restaurant_id) {
+    public boolean addFoodInfo(ItemForDB item, int restaurant_id) {
         try {
-            String query = "INSERT INTO food_list\n" +
-                    "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
-                    item.getPrice() + ")";
+            String query;
+            if (item.getURL() == null && item.getDesc() == null) {
+                query = "INSERT INTO food_list\n" +
+                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
+                        item.getPrice() + ", DEFAULT, DEFAULT)";
+            } else if (item.getURL() == null) {
+                query = "INSERT INTO food_list\n" +
+                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
+                        item.getPrice() + ", \"" + item.getDesc() + "\", DEFAULT)";
+            } else if (item.getDesc() == null) {
+                query = "INSERT INTO food_list\n" +
+                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
+                        item.getPrice() + ", DEFAULT, \"" + item.getURL() + "\")";
+            } else {
+                query = "INSERT INTO food_list\n" +
+                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
+                        item.getPrice() + ", \"" + item.getDesc() + "\", \"" + item.getURL() + "\")";
+            }
 
             stmtRes.execute(query);
             return true;
@@ -270,10 +290,10 @@ public class DatabaseCon {
 
     }
 
-    public boolean addCategory(String category) {
+    public boolean addCategory(String category, int category_id) {
         try {
             String query = "INSERT INTO category_list\n" +
-                    "VALUES (DEFAULT, \"" + category + "\")";
+                    "VALUES (" + category_id + ", \"" + category + "\")";
 
             stmtRes.execute(query);
             return true;
@@ -303,16 +323,16 @@ public class DatabaseCon {
         }
     }
 
-    public String orderFromSearch(String restaurant) {
+    public Pair orderFromSearch(String restaurant) {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+            ResultSet rs = stmtRes.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + restaurant + "%\"");
             rs.next();
-            return rs.getString(1);
+            return new Pair(rs.getString(1), rs.getString(2));
         } catch (SQLException e) {
             e.printStackTrace();
-            return "No restaurant found";
+            return new Pair("No restaurant found", null);
         }
     }
 
@@ -374,7 +394,7 @@ public class DatabaseCon {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return "Invalid restaurant. Please use /restaurantsearch to see all" +
+            return "Invalid restaurant. Please use /searchrestaurant to see all" +
                     "the available restaurant.";
         }
     }
@@ -383,14 +403,14 @@ public class DatabaseCon {
         try {
             StringBuilder sb = new StringBuilder();
 
-            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+            ResultSet rs = stmtRes.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + keyword + "%\"");
 
             sb.append("Restaurant avalaible:\n");
 
             while (rs.next()) {
-                sb.append(rs.getString(1) + "\n");
+                sb.append(rs.getString(1) + " -- " + rs.getString(2) + "\n");
             }
             return sb.toString().trim();
         } catch (SQLException e) {
@@ -411,5 +431,26 @@ public class DatabaseCon {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public DescAndURL getItemDescAndURL(String item, String restaurantName) {
+        try {
+            int restaurantID = getRestaurantID(restaurantName);
+            ResultSet rs = stmtRes.executeQuery("SELECT description, url\n" +
+                    "FROM food_list\n" +
+                    "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
+            rs.next();
+
+            return new DescAndURL(rs.getString(1), rs.getString(2));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void main (String[] args) {
+        DatabaseCon db = new DatabaseCon();
+        //System.out.println(db.getRestaurantID("cafe"));
+        db.getItemDescAndURL("beef meat", "cafe");
     }
 }

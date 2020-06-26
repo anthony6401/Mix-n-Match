@@ -16,6 +16,8 @@ public class CommandListCommand implements Command {
                 "orderfrom -- Set from where you want to order\n" +
                 "orderto -- Set to where you want to order\n" +
                 "invitelink -- Set the invite link to the group\n" +
+                "foodinfo -- Search for the info of the food. " +
+                "Use in the format of /foodinfo [restaurant] | [food]\n" +
                 "ordertime -- Set the order time limit of the order. The order time limit is in minutes\n" +
                 "paymenttime -- Set the payment time limit of the order. The payment time limit is in minutes\n" +
                 "finalizeorder -- Finalize the order and notify everyone near the location. " +
