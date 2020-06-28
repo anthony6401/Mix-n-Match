@@ -349,13 +349,16 @@ public class DatabaseCon {
             String categorySearched = rsID.getString(2);
             int category_id = rsID.getInt(1);
 
-            ResultSet rs = stmtRes.executeQuery("SELECT restaurant_name\n" +
-                    "FROM restaurant_category\n" +
+            ResultSet rs = stmtRes.executeQuery("SELECT rc.restaurant_name, delivery_hours\n" +
+                    "FROM restaurant_category rc\n" +
+                    "JOIN restaurant_list rl\n" +
+                    "ON rc.restaurant_name = rl.name\n" +
                     "WHERE category_id = " + category_id);
 
             sb.append("Restaurant in " + categorySearched + " category:\n");
             while (rs.next()) {
-                sb.append(rs.getString(1) + "\n");
+                sb.append(rs.getString(1) + " -- "
+                        + rs.getString(2) + "\n");
             }
 
             return sb.toString().trim();
