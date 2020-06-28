@@ -84,12 +84,12 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 } else if (commandString.startsWith("/add")) {
                     ClientOrder co = map.get(chat_id);
                     command = new AddCommand(arg, telegram_id, co);
-                } else if (commandString.startsWith("/remove")) {
-                    ClientOrder co = map.get(chat_id);
-                    command = new RemoveCommand(arg, telegram_id, co);
                 } else if (commandString.startsWith("/removeall")) {
                     ClientOrder co = map.get(chat_id);
                     command = new RemoveAllCommand(telegram_id, co);
+                } else if (commandString.startsWith("/remove")) {
+                    ClientOrder co = map.get(chat_id);
+                    command = new RemoveCommand(arg, telegram_id, co);
                 } else if (commandString.startsWith("/deliverycost")) {
                     ClientOrder co = map.get(chat_id);
                     command = new DeliveryCostCommand(arg, co);

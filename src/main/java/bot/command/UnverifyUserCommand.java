@@ -35,7 +35,7 @@ public class UnverifyUserCommand implements Command {
             for (Map.Entry<Integer, UserOrder> entry : co.entrySet()) {
                 if (entry.getValue().getUsername().equals(username) ||
                         entry.getValue().getUsername().equals("@" + username)) {
-                    co.get(telegram_id).setStatusToNotPaid();
+                    co.get(entry.getKey()).setStatusToNotPaid();
                     return "Successfully unverifying the user's payment!";
                 }
             }

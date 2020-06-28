@@ -191,10 +191,6 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
             sb.append(uo.toString() + "\n\n");
         }
 
-        if (inviteLink != null) {
-            sb.append("Group invite link: " + inviteLink + "\n");
-        }
-
         if (mobileNumber != null) {
             sb.append("Pay to: " + mobileNumber + "\n");
         }

@@ -35,7 +35,7 @@ public class VerifyUserCommand implements Command {
             for (Map.Entry<Integer, UserOrder> entry : co.entrySet()) {
                 if (entry.getValue().getUsername().equals(username) ||
                 entry.getValue().getUsername().equals("@" + username)) {
-                    co.get(telegram_id).setStatusToPaid();
+                    co.get(entry.getKey()).setStatusToPaid();
                     return "Successfully verifying the user's payment!";
                 }
             }
