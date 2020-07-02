@@ -11,9 +11,6 @@ import java.net.URLEncoder;
 import java.util.List;
 
 public class GoogleMapAPI {
-    public static String key = "AIzaSyDIWEKaDIthMAPmibgP4PEIUuNeCP69fi0";
-    public static String findPlaceFromString = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json";
-    public static String findCoordinates = "https://maps.googleapis.com/maps/api/geocode/json";
     public static String charset = "UTF-8";
 
 
@@ -21,8 +18,8 @@ public class GoogleMapAPI {
     }
 
     public String findPlace(String place) {
-        String host = this.findPlaceFromString;
-        String key = this.key;
+        String host = GoogleMapKeyAndURL.findPlaceFromString;
+        String key = GoogleMapKeyAndURL.key;
 
         String inputtype = "textquery";
 
@@ -50,8 +47,8 @@ public class GoogleMapAPI {
     }
 
     public PlaceInfo getPlaceCoordinates(String place) {
-        String host = this.findCoordinates;
-        String key = this.key;
+        String host = GoogleMapKeyAndURL.findCoordinates;
+        String key = GoogleMapKeyAndURL.key;
 
         try {
             String url = String.format("key=%s&address=%s",
