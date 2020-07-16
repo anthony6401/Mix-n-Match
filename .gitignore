@@ -2,5 +2,3 @@ src/main/java/bot/utility/BotIdentity.java
 target/classes/bot/utility/BotIdentity.class
 src/main/java/bot/utility/GoogleMapKeyAndURL.java
 target/classes/bot/utility/GoogleMapKeyAndURL.class
-web/node_modules
-web/.env

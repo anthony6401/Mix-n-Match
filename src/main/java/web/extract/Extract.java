@@ -4,6 +4,7 @@ import bot.utility.CategoryInfo;
 import bot.utility.DatabaseCon;
 import bot.utility.ItemForDB;
 import bot.utility.RestaurantInfo;
+import bot.utility.CategoryForDB;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
@@ -11,8 +12,11 @@ import com.gargoylesoftware.htmlunit.html.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
@@ -33,7 +37,7 @@ public class Extract {
 
     }
 
-    public List<ItemForDB> getFoodInfo(String url) {
+    public List<ItemForDB> getFoodInfo(String url, int restaurant_id) {
         List<ItemForDB> result = new ArrayList<>();
         try {
             HtmlPage page = client.getPage(url);
@@ -61,7 +65,7 @@ public class Extract {
                     String sPrice = price.asText();
                     float priceNumber = Float.valueOf(sPrice.split("\\$")[1]);
 
-                    ItemForDB item = new ItemForDB(name.asText(), priceNumber, desc, imageURL);
+                    ItemForDB item = new ItemForDB(name.asText(), priceNumber, desc, imageURL, restaurant_id);
                     result.add(item);
                 }
             }
@@ -74,7 +78,7 @@ public class Extract {
         return result;
     }
 
-    public List<RestaurantInfo> getRestaurantInfo(String url) {
+    public List<RestaurantInfo> getRestaurantInfo(String url, int category_id) {
         List<RestaurantInfo> result = new ArrayList<>();
 
         try {
@@ -101,7 +105,7 @@ public class Extract {
                         deliveryHours = deliveryHoursElement.asText();
                     }
 
-                    result.add(new RestaurantInfo(name, URL, deliveryHours));
+                    result.add(new RestaurantInfo(name, URL, deliveryHours, category_id));
                 }
             }
         } catch (IOException e) {
@@ -142,19 +146,23 @@ public class Extract {
         return result;
     }
 
-    public CompletableFuture<Boolean> addRestaurantAndFoodInfo(String name, String url,
-                                                               int category_id, int restaurant_id,
-                                                               String deliveryHours) {
+    public CompletableFuture<Boolean> addRestaurantAndFoodInfo(RestaurantInfo restaurantInfo,
+                                                               int restaurant_id,
+                                                               List<ItemForDB> list, Map<RestaurantInfo, Integer> restaurantMap) {
         return CompletableFuture.supplyAsync(() -> {
-            boolean toAddFood = db.addRestaurant(name, restaurant_id, category_id, deliveryHours);
+            boolean toAddFood = !restaurantMap.containsKey(restaurantInfo);
+//            boolean toAddFood = db.addRestaurant(restaurantName, restaurant_id, category_id, deliveryHours);
             if (toAddFood) {
+                restaurantMap.put(restaurantInfo, restaurant_id);
                 try {
-                    List<ItemForDB> items = getFoodInfo(url);
+                    String url = restaurantInfo.getURL();
+                    List<ItemForDB> items = getFoodInfo(url, restaurant_id);
                     if (items.size() != 0) {
-                        for (ItemForDB item : items) {
-                            db.addFoodInfo(item, restaurant_id);
-
-                        }
+                        list.addAll(items);
+//                        for (ItemForDB item : items) {
+//                            db.addFoodInfo(item, restaurant_id);
+//
+//                        }
                     }
                 } catch (FailingHttpStatusCodeException e) {
                     System.out.println("Page is error.");
@@ -166,25 +174,28 @@ public class Extract {
 
     public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
+        int count = 0;
         int restaurant_id = 1;
         int category_id = 1;
         List<CategoryInfo> categories = getCategory(foodPandaURL);
+        List<CategoryForDB> categoryList = new ArrayList<>();
+        List<ItemForDB> foodList = new ArrayList<>();
+        Map<RestaurantInfo, Integer> restaurantMap = new HashMap<>();
         for (CategoryInfo category : categories) {
             String cat = category.getCategory();
             String URL = category.getURL();
 
-            db.addCategory(cat, category_id);
-            List<RestaurantInfo> restaurantInfos = getRestaurantInfo(URL);
+            categoryList.add(new CategoryForDB(cat, category_id));
+            List<RestaurantInfo> restaurantInfos = getRestaurantInfo(URL, category_id);
             List<CompletableFuture<Boolean>> async = new ArrayList<>();
 
             for (RestaurantInfo restaurantInfo : restaurantInfos) {
-                String restaurantName = restaurantInfo.getRestaurantName();
-                String url = restaurantInfo.getURL();
-                String deliveryHours = restaurantInfo.getDeliveryHours();
-                CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantName, url,
-                        category_id, restaurant_id, deliveryHours);
+
+                CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantInfo,
+                        restaurant_id, foodList, restaurantMap);
                 restaurant_id++;
                 async.add(addInfo);
+                count++;
 
             }
 
@@ -194,12 +205,13 @@ public class Extract {
             } catch (CompletionException e) {
                 e.printStackTrace();
             }
-        }
-    }
 
-    public static void main(String[] args) {
-        Extract ex = new Extract();
-        ex.getFoodInfo("https://www.foodpanda.sg/restaurant/s1fv/cafe-etc#");
+
+        }
+
+        db.addRestaurant(restaurantMap);
+        db.addCategory(categoryList);
+        db.addFoodInfo(foodList);
 
     }
 }

@@ -2,7 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b8b5f7a0-0445-4522-903c-54a9a2518a02" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/bot/utility/CategoryForDB.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bot/utility/DatabaseQuery.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/WebExtraction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/WebExtraction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/command/JoinCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/command/JoinCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/DatabaseCon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/DatabaseCon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/ItemForDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/ItemForDB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bot/utility/RestaurantInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bot/utility/RestaurantInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/web/extract/Extract.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/web/extract/Extract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/WebExtraction.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/WebExtraction.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/DatabaseCon.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/DatabaseCon.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/ItemForDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/ItemForDB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/bot/utility/RestaurantInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/bot/utility/RestaurantInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/web/extract/Extract.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/web/extract/Extract.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web.rar" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +43,7 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="D:/Test" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -54,7 +68,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.ExecuteBot">
+  <component name="RunManager" selected="Application.WebExtraction">
     <configuration name="DatabaseCon" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="bot.utility.DatabaseCon" />
       <module name="mixnmatch" />
@@ -104,8 +118,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.ExecuteBot" />
         <item itemvalue="Application.WebExtraction" />
+        <item itemvalue="Application.ExecuteBot" />
         <item itemvalue="Application.DatabaseCon" />
         <item itemvalue="Application.Extract" />
         <item itemvalue="Application.VerifyUserCommand" />
@@ -137,16 +151,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/bot/utility/DatabaseCon.java</url>
-          <line>321</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

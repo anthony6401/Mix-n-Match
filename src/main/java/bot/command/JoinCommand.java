@@ -1,6 +1,7 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
+import bot.utility.DateTime;
 
 public class JoinCommand implements Command {
     private final String username;
@@ -30,6 +31,7 @@ public class JoinCommand implements Command {
         }
 
         co.addUser(telegram_id, username);
+        db.addHistory(DateTime.unixTimeToDate(co.getStartTime()), telegram_id, co.getFrom(), co.getTo());
         return "Successfully join a group!\n" +
                 "Here is the group invite link: " + co.getInviteLink();
 

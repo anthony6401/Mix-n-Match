@@ -3,50 +3,97 @@ package bot.utility;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 public class DatabaseCon {
-    public static String userdbURL = "jdbc:mysql://localhost:3306/usersdb?serverTimezone=MST";
-    public static String restaurantURL = "jdbc:mysql://localhost:3306/restaurantdb?serverTimezone=MST";
+    public static String url = "jdbc:mysql://localhost:3306/test_database?serverTimezone=MST";
     public static String user = "root";
     public static String password = "Password123";
-    private Statement stmtUser;
-    private Statement stmtRes;
 
     public DatabaseCon() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection conUser = DriverManager.getConnection(userdbURL, user, password);
-            Connection conRes = DriverManager.getConnection(restaurantURL, user, password);
-            Statement stmtUser = conUser.createStatement();
-            Statement stmtRes = conRes.createStatement();
-            this.stmtUser = stmtUser;
-            this.stmtRes = stmtRes;
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void initializeRestaurantDatabase() {
+    public void createDatabase() {
         try {
-            String query1 = "DELETE FROM food_list WHERE food_id >= 1;";
-            String query2 = "DELETE FROM restaurant_list WHERE restaurant_id >= 1;";
-            String query3 = "ALTER TABLE `restaurantdb`.`restaurant_list` AUTO_INCREMENT = 1;";
-            String query4 = "ALTER TABLE `restaurantdb`.`food_list` AUTO_INCREMENT = 1;";
-            String query5 = "DELETE FROM category_list WHERE category_id >= 1;";
-            String query6 = "ALTER TABLE `restaurantdb`.`category_list` AUTO_INCREMENT = 1;";
-            String query7 = "DELETE FROM restaurant_category WHERE rc_id >= 1;";
-            String query8 = "ALTER TABLE `restaurantdb`.`restaurant_category` AUTO_INCREMENT = 1;";
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
 
-            stmtRes.addBatch(query1);
-            stmtRes.addBatch(query2);
-            stmtRes.addBatch(query3);
-            stmtRes.addBatch(query4);
-            stmtRes.addBatch(query5);
-            stmtRes.addBatch(query6);
-            stmtRes.addBatch(query7);
-            stmtRes.addBatch(query8);
+            Scanner sc1 = new Scanner(DatabaseQuery.query1);
+            while (sc1.hasNext()) {
+                String string = sc1.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
 
-            stmtRes.executeBatch();
+            stmt.execute(DatabaseQuery.CREATE_CATEGORY_LIST);
+
+            Scanner sc2 = new Scanner(DatabaseQuery.query2);
+            while (sc2.hasNext()) {
+                String string = sc2.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_FOOD_LIST);
+
+            Scanner sc3 = new Scanner(DatabaseQuery.query3);
+            while (sc3.hasNext()) {
+                String string = sc3.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_CATEGORY);
+
+            Scanner sc4 = new Scanner(DatabaseQuery.query4);
+            while (sc4.hasNext()) {
+                String string = sc4.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_LIST);
+
+            Scanner sc5 = new Scanner(DatabaseQuery.query5);
+            while (sc5.hasNext()) {
+                String string = sc5.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_HISTORY);
+
+            Scanner sc6 = new Scanner(DatabaseQuery.query6);
+            while (sc6.hasNext()) {
+                String string = sc6.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_STATUS_ID);
+
+            Scanner sc7 = new Scanner(DatabaseQuery.query7);
+            while (sc7.hasNext()) {
+                String string = sc7.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_USER);
+
+            Scanner sc8 = new Scanner(DatabaseQuery.query8);
+            while (sc8.hasNext()) {
+                String string = sc8.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -54,7 +101,10 @@ public class DatabaseCon {
 
     public boolean containsUser(String telegramCode) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_code\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT Telegram_code\n" +
                     "FROM user\n" +
                     "WHERE Telegram_code = \"" + telegramCode + "\"");
             rs.next();
@@ -66,7 +116,9 @@ public class DatabaseCon {
 
     public boolean addTelegramInformation(String telegramCode, Integer telegram_id) {
         try {
-            stmtUser.execute("UPDATE user\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            stmt.execute("UPDATE user\n" +
                     "SET Telegram_id = " + telegram_id + "\n" +
                     "WHERE Telegram_code = \"" + telegramCode + "\"");
             return true;
@@ -77,7 +129,9 @@ public class DatabaseCon {
 
     public boolean isOnline(Integer telegram_id) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Status\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Status\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id);
 
@@ -95,8 +149,12 @@ public class DatabaseCon {
 
     public String getHistory(Integer telegram_id) {
         try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
             int userID = getUserID(telegram_id);
-            ResultSet rs = stmtUser.executeQuery("SELECT date, order_from, order_to\n" +
+
+            ResultSet rs = stmt.executeQuery("SELECT date, order_from, order_to\n" +
                     "FROM history\n" +
                     "WHERE user_id = " + userID);
 
@@ -117,7 +175,10 @@ public class DatabaseCon {
 
     public int getUserID(Integer telegram_id) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT user_id\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT user_id\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id + " AND STATUS = 1");
             rs.next();
@@ -130,9 +191,11 @@ public class DatabaseCon {
 
     public boolean addHistory(String date, Integer telegram_id, String from, String to) {
         try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
             int userID = getUserID(telegram_id);
             if (userID != -1) {
-                stmtUser.execute("INSERT INTO history\n" +
+                stmt.execute("INSERT INTO history\n" +
                         "VALUES (DEFAULT, " + userID + ", \"" + date + "\", \"" +
                         from + "\", \"" + to + "\")");
                 return true;
@@ -149,7 +212,9 @@ public class DatabaseCon {
         List<UserInfo> result = new ArrayList<>();
 
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Telegram_id, Longitude, Latitude\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Telegram_id, Longitude, Latitude\n" +
                     "FROM user\n" +
                     "WHERE Status = 1 AND Telegram_id != " + telegram_id);
 
@@ -166,7 +231,9 @@ public class DatabaseCon {
 
     public boolean updateOnline(String telegramCode) {
         try {
-            stmtUser.execute("UPDATE user\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            stmt.execute("UPDATE user\n" +
                     "SET status = 1\n" +
                     "WHERE Telegram_code = \"" + telegramCode + "\"");
             return true;
@@ -177,7 +244,9 @@ public class DatabaseCon {
 
     public boolean updateOffline(Integer telegram_id) {
         try {
-            stmtUser.execute("UPDATE user\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            stmt.execute("UPDATE user\n" +
                     "SET status = 2\n" +
                     "WHERE Telegram_id = " + telegram_id);
             return true;
@@ -188,7 +257,9 @@ public class DatabaseCon {
 
     public String getMobileNumber(Integer telegram_id) {
         try {
-            ResultSet rs = stmtUser.executeQuery("SELECT Mobile_number\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT Mobile_number\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id + " AND STATUS = 1");
             rs.next();
@@ -200,7 +271,9 @@ public class DatabaseCon {
 
     public int getRestaurantID(String name) {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT restaurant_id\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT restaurant_id\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + name + "%\"");
 
@@ -213,7 +286,9 @@ public class DatabaseCon {
 
     public int getCategoryID(String category) {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT category_id\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT category_id\n" +
                     "FROM category_list\n" +
                     "WHERE name = \"" + category + "\"");
 
@@ -229,29 +304,43 @@ public class DatabaseCon {
     }
 
 
-    public boolean addRestaurant(String name, int restaurant_id,
-                                 int category_id, String deliveryHours) {
+    public boolean addRestaurant(Map<RestaurantInfo, Integer> restaurantMap) {
         try {
-            String categoryQuery = "INSERT INTO restaurant_category\n" +
-                    "VALUES(DEFAULT, \"" + name + "\", " + category_id + ")";
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmtUser = con.createStatement();
 
-            stmtRes.execute(categoryQuery);
+            StringBuffer sb = new StringBuffer();
 
-            if (!hasRestaurant(name)) {
-                String query;
+            sb.append("INSERT INTO restaurant_list VALUES ");
+
+            for (Map.Entry<RestaurantInfo, Integer> entry : restaurantMap.entrySet()) {
+
+                int restaurant_id = entry.getValue();
+                RestaurantInfo restaurantInfo = entry.getKey();
+
+                String name = restaurantInfo.getRestaurantName();
+                String deliveryHours = restaurantInfo.getDeliveryHours();
+                int category_id = restaurantInfo.getCategory_id();
+
+                String categoryQuery = "INSERT INTO restaurant_category\n" +
+                        "VALUES(DEFAULT, \"" + name + "\", " + category_id + ")";
+
+                stmtUser.execute(categoryQuery);
+
                 if (deliveryHours == null) {
-                    query = "INSERT INTO restaurant_list\n" +
-                            "VALUES (" + restaurant_id + ", \"" + name + "\", " +
-                            "DEFAULT)";
+                    sb.append("(" + restaurant_id + ", \"" + name + "\", " +
+                            "DEFAULT), ");
                 } else {
-                    query = "INSERT INTO restaurant_list\n" +
-                            "VALUES (" + restaurant_id + ", \"" + name + "\", \"" +
-                            deliveryHours + "\")";
+                    sb.append("(" + restaurant_id + ", \"" + name + "\", \"" +
+                            deliveryHours + "\"), ");
                 }
-                stmtRes.execute(query);
             }
 
-            stmtRes.closeOnCompletion();
+            String query = sb.toString();
+            query = query.substring(0, query.length() - 2);
+
+            stmtUser.execute(query);
+
             return true;
 
         } catch (SQLException e) {
@@ -261,41 +350,73 @@ public class DatabaseCon {
     }
 
 
-    public boolean addFoodInfo(ItemForDB item, int restaurant_id) {
+    public boolean addFoodInfo(List<ItemForDB> items) {
         try {
-            String query;
-            if (item.getURL() == null && item.getDesc() == null) {
-                query = "INSERT INTO food_list\n" +
-                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
-                        item.getPrice() + ", DEFAULT, DEFAULT)";
-            } else if (item.getURL() == null) {
-                query = "INSERT INTO food_list\n" +
-                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
-                        item.getPrice() + ", \"" + item.getDesc() + "\", DEFAULT)";
-            } else if (item.getDesc() == null) {
-                query = "INSERT INTO food_list\n" +
-                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
-                        item.getPrice() + ", DEFAULT, \"" + item.getURL() + "\")";
-            } else {
-                query = "INSERT INTO food_list\n" +
-                        "VALUES (DEFAULT, " + restaurant_id + ", \"" + item.getName() + "\", " +
-                        item.getPrice() + ", \"" + item.getDesc() + "\", \"" + item.getURL() + "\")";
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("INSERT INTO food_list VALUES ");
+
+            for (ItemForDB item : items) {
+                String query;
+                String name = item.getName().replaceAll("\"", "\\\\\"");
+                String desc = null;
+
+                if (item.getDesc() != null) {
+                    desc = item.getDesc().replaceAll("\"", "\\\\\"");
+                }
+                if (item.getURL() == null && desc == null) {
+                    query = "(DEFAULT, " + item.getRestaurant_id() + ", \"" + name + "\", " +
+                            item.getPrice() + ", DEFAULT, DEFAULT), ";
+                } else if (item.getURL() == null) {
+                    query = "(DEFAULT, " + item.getRestaurant_id() + ", \"" + name + "\", " +
+                            item.getPrice() + ", \"" + desc + "\", DEFAULT), ";
+                } else if (desc == null) {
+                    query = "(DEFAULT, " + item.getRestaurant_id() + ", \"" + name + "\", " +
+                            item.getPrice() + ", DEFAULT, \"" + item.getURL() + "\"), ";
+                } else {
+                    query = "(DEFAULT, " + item.getRestaurant_id() + ", \"" + name + "\", " +
+                            item.getPrice() + ", \"" + desc + "\", \"" + item.getURL() + "\"), ";
+                }
+
+                System.out.println(query);
+                sb.append(query);
             }
 
-            stmtRes.execute(query);
+            String queryString = sb.toString();
+            String query = queryString.substring(0, queryString.length() - 2);
+            stmt.execute(query);
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
 
     }
 
-    public boolean addCategory(String category, int category_id) {
+    public boolean addCategory(List<CategoryForDB> list) {
         try {
-            String query = "INSERT INTO category_list\n" +
-                    "VALUES (" + category_id + ", \"" + category + "\")";
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmtUser = con.createStatement();
 
-            stmtRes.execute(query);
+            StringBuffer sb = new StringBuffer();
+            sb.append("INSERT INTO category_list VALUES ");
+
+
+            for (CategoryForDB category : list) {
+                int category_id = category.getCategory_id();
+                String cat = category.getCategory();
+
+                String query = "(" + category_id + ", \"" + cat + "\"), ";
+                sb.append(query);
+
+            }
+
+            String query = sb.toString();
+            query = query.substring(0, query.length() - 2);
+
+            stmtUser.execute(query);
             return true;
 
         } catch (SQLException e) {
@@ -306,7 +427,9 @@ public class DatabaseCon {
 
     public String getAllCategory() {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT name\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT name\n" +
                     "FROM category_list\n" +
                     "WHERE category_id >= 1");
             StringBuilder sb = new StringBuilder();
@@ -325,7 +448,10 @@ public class DatabaseCon {
 
     public Pair orderFromSearch(String restaurant) {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT name, delivery_hours\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + restaurant + "%\"");
             rs.next();
@@ -338,9 +464,11 @@ public class DatabaseCon {
 
     public String getRestaurantList(String category) {
         try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
-            ResultSet rsID = stmtRes.executeQuery("SELECT *\n" +
+            ResultSet rsID = stmt.executeQuery("SELECT *\n" +
                     "FROM category_list\n" +
                     "WHERE name LIKE \"" + category + "%\"");
 
@@ -349,7 +477,7 @@ public class DatabaseCon {
             String categorySearched = rsID.getString(2);
             int category_id = rsID.getInt(1);
 
-            ResultSet rs = stmtRes.executeQuery("SELECT rc.restaurant_name, delivery_hours\n" +
+            ResultSet rs = stmt.executeQuery("SELECT rc.restaurant_name, delivery_hours\n" +
                     "FROM restaurant_category rc\n" +
                     "JOIN restaurant_list rl\n" +
                     "ON rc.restaurant_name = rl.name\n" +
@@ -372,9 +500,12 @@ public class DatabaseCon {
 
     public String getRestaurantMenu(String restaurant) {
         try {
+
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
-            ResultSet rsID = stmtRes.executeQuery("SELECT *\n" +
+            ResultSet rsID = stmt.executeQuery("SELECT *\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"" + restaurant + "%\"");
 
@@ -383,7 +514,7 @@ public class DatabaseCon {
             String restaurantSearched = rsID.getString(2);
             int restaurant_id = rsID.getInt(1);
 
-            ResultSet rs = stmtRes.executeQuery("SELECT name, price\n" +
+            ResultSet rs = stmt.executeQuery("SELECT name, price\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurant_id + "\n" +
                     "ORDER BY name");
@@ -404,9 +535,11 @@ public class DatabaseCon {
 
     public String searchRestaurant(String keyword) {
         try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
-            ResultSet rs = stmtRes.executeQuery("SELECT name, delivery_hours\n" +
+            ResultSet rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + keyword + "%\"");
 
@@ -424,7 +557,9 @@ public class DatabaseCon {
 
     public Item findItem(String item, int restaurantID) {
         try {
-            ResultSet rs = stmtRes.executeQuery("SELECT name, price\n" +
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT name, price\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
             rs.next();
@@ -438,8 +573,10 @@ public class DatabaseCon {
 
     public DescAndURL getItemDescAndURL(String item, String restaurantName) {
         try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
             int restaurantID = getRestaurantID(restaurantName);
-            ResultSet rs = stmtRes.executeQuery("SELECT description, url\n" +
+            ResultSet rs = stmt.executeQuery("SELECT description, url\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
             rs.next();
@@ -449,11 +586,5 @@ public class DatabaseCon {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static void main (String[] args) {
-        DatabaseCon db = new DatabaseCon();
-        //System.out.println(db.getRestaurantID("cafe"));
-        db.getItemDescAndURL("beef meat", "cafe");
     }
 }
