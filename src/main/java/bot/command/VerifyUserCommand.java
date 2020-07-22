@@ -33,6 +33,7 @@ public class VerifyUserCommand implements Command {
 
         if (co.getUser(telegram_id).getStatus() == UserStatus.ORDEREE) {
             for (Map.Entry<Integer, UserOrder> entry : co.entrySet()) {
+                System.out.println(username);
                 if (entry.getValue().getUsername().equals(username) ||
                 entry.getValue().getUsername().equals("@" + username)) {
                     co.get(entry.getKey()).setStatusToPaid();

@@ -21,10 +21,6 @@ public class InviteLinkCommand implements Command {
             return "You did not specify the invite link. Please type it in the format /invitelink [invite link]!";
         }
 
-        if (this.map.get(chat_id).getFinalizeStatus()) {
-            return "You have finalize your order! If you want to reset, please make another group!";
-        }
-
         if (this.map.containsKey(chat_id)) {
             ClientOrder co = this.map.get(chat_id);
             if (co.getFinalizeStatus()) {
@@ -32,11 +28,14 @@ public class InviteLinkCommand implements Command {
             }
             co.setInviteLink(inviteLink);
         } else {
-            ClientOrder co = new ClientOrder();
-            co.setInviteLink(inviteLink);
-            this.map.put(chat_id, co);
+            if (inviteLink.startsWith("https://t.me/joinchat/")) {
+                ClientOrder co = new ClientOrder();
+                co.setInviteLink(inviteLink);
+                this.map.put(chat_id, co);
+            } else {
+                return "Invalid telegram group link!";
+            }
         }
-
         return "Successfully adding the invite link!";
     }
 }

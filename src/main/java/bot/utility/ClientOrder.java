@@ -114,6 +114,12 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
 
     public ClientOrder setDeliveryCost(double deliveryCost) {
         this.deliveryCost = deliveryCost;
+
+        for (Map.Entry<Integer, UserOrder> entry : entrySet()) {
+            UserOrder uo = entry.getValue();
+            uo.setDeliveryCost(deliveryCost / numberOfPeople);
+        }
+
         return this;
     }
 
@@ -187,7 +193,6 @@ public class ClientOrder extends HashMap<Integer, UserOrder> {
         for (Map.Entry<Integer, UserOrder> entry : entrySet()) {
             UserOrder uo = entry.getValue();
             sb.append(uo.getUsername() + "'s orders:\n");
-            uo.setDeliveryCost(deliveryCost / numberOfPeople);
             sb.append(uo.toString() + "\n\n");
         }
 

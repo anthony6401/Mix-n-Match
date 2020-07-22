@@ -40,7 +40,7 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_FOOD_LIST);
+            stmt.execute(DatabaseQuery.CREATE_FOOD_HISTORY);
 
             Scanner sc3 = new Scanner(DatabaseQuery.query3);
             while (sc3.hasNext()) {
@@ -49,7 +49,7 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_CATEGORY);
+            stmt.execute(DatabaseQuery.CREATE_FOOD_LIST);
 
             Scanner sc4 = new Scanner(DatabaseQuery.query4);
             while (sc4.hasNext()) {
@@ -58,7 +58,7 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_LIST);
+            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_CATEGORY);
 
             Scanner sc5 = new Scanner(DatabaseQuery.query5);
             while (sc5.hasNext()) {
@@ -67,7 +67,7 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_HISTORY);
+            stmt.execute(DatabaseQuery.CREATE_RESTAURANT_LIST);
 
             Scanner sc6 = new Scanner(DatabaseQuery.query6);
             while (sc6.hasNext()) {
@@ -76,7 +76,7 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_STATUS_ID);
+            stmt.execute(DatabaseQuery.CREATE_HISTORY);
 
             Scanner sc7 = new Scanner(DatabaseQuery.query7);
             while (sc7.hasNext()) {
@@ -85,11 +85,30 @@ public class DatabaseCon {
                 stmt.execute(string);
             }
 
-            stmt.execute(DatabaseQuery.CREATE_USER);
+            stmt.execute(DatabaseQuery.CREATE_USER_BANNED);
 
             Scanner sc8 = new Scanner(DatabaseQuery.query8);
             while (sc8.hasNext()) {
                 String string = sc8.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_STATUS_ID);
+
+
+            Scanner sc9 = new Scanner(DatabaseQuery.query9);
+            while (sc9.hasNext()) {
+                String string = sc9.nextLine();
+                System.out.println(string);
+                stmt.execute(string);
+            }
+
+            stmt.execute(DatabaseQuery.CREATE_USER);
+
+            Scanner sc10 = new Scanner(DatabaseQuery.query10);
+            while (sc10.hasNext()) {
+                String string = sc10.nextLine();
                 System.out.println(string);
                 stmt.execute(string);
             }
@@ -99,14 +118,98 @@ public class DatabaseCon {
         }
     }
 
+    public boolean containsOrderId(long order_id) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM history WHERE order_id = " + order_id);
+            rs.next();
+
+            int orderID = rs.getInt(3);
+
+            return orderID == order_id;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    public int getBannedTime(long telegram_id) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT unix_unbanned FROM user_banned WHERE telegram_id = " + telegram_id);
+
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            return -1;
+        }
+
+    }
+
+    public int getBannedID(long telegram_id) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT telegram_id FROM user_banned WHERE telegram_id = " + telegram_id);
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public boolean addBanned(long telegram_id, int timeForUnbanned) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            int bannedID = getBannedID(telegram_id);
+            System.out.println(bannedID);
+
+            if (bannedID != -1) {
+                stmt.execute("UPDATE user_banned SET unix_unbanned = " + timeForUnbanned + " WHERE telegram_id = " + telegram_id);
+            } else {
+                stmt.execute("INSERT INTO user_banned " +
+                        "VALUES (DEFAULT, " + telegram_id + ", " + timeForUnbanned + ")");
+            }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean isBanned(long telegram_id, int timeNow) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT * FROM user_banned WHERE telegram_id = " + telegram_id);
+
+            rs.next();
+
+            Long unbanned_time = rs.getLong(3);
+
+            return unbanned_time - timeNow > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
     public boolean containsUser(String telegramCode) {
         try {
             Connection con = DriverManager.getConnection(url, user, password);
             Statement stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT Telegram_code\n" +
+            ResultSet rs = stmt.executeQuery("SELECT Token\n" +
                     "FROM user\n" +
-                    "WHERE Telegram_code = \"" + telegramCode + "\"");
+                    "WHERE Token = \"" + telegramCode + "\"");
             rs.next();
             return rs.getString(1).equals(telegramCode);
         } catch (SQLException e) {
@@ -120,7 +223,7 @@ public class DatabaseCon {
             Statement stmt = con.createStatement();
             stmt.execute("UPDATE user\n" +
                     "SET Telegram_id = " + telegram_id + "\n" +
-                    "WHERE Telegram_code = \"" + telegramCode + "\"");
+                    "WHERE Token = \"" + telegramCode + "\"");
             return true;
         } catch (SQLException e) {
             return false;
@@ -189,14 +292,14 @@ public class DatabaseCon {
         }
     }
 
-    public boolean addHistory(String date, Integer telegram_id, String from, String to) {
+    public boolean addHistory(String date, double deliveryCost, Integer telegram_id, String from, String to, long order_id) {
         try {
             Connection con = DriverManager.getConnection(url, user, password);
             Statement stmt = con.createStatement();
             int userID = getUserID(telegram_id);
             if (userID != -1) {
                 stmt.execute("INSERT INTO history\n" +
-                        "VALUES (DEFAULT, " + userID + ", \"" + date + "\", \"" +
+                        "VALUES (DEFAULT, " + userID + ", " + order_id + ", \"" + date + "\", " + deliveryCost + ", \"" +
                         from + "\", \"" + to + "\")");
                 return true;
             }
@@ -204,6 +307,35 @@ public class DatabaseCon {
             return false;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean addFoodHistory(long order_id, int telegram_id, UserOrder uo) {
+        try {
+            Connection con = DriverManager.getConnection(url, user, password);
+            Statement stmt = con.createStatement();
+
+            int userID = getUserID(telegram_id);
+
+            StringBuffer sb = new StringBuffer();
+
+            sb.append("INSERT INTO food_history VALUES ");
+
+            if (userID != -1) {
+                for (Item item : uo.getOrders()) {
+                    String query = "(DEFAULT, " + userID + ", " + order_id + ", \"" + item.toString() + "\"), ";
+                    sb.append(query);
+                }
+
+                String query = sb.toString();
+                query = query.substring(0, query.length() - 2);
+                stmt.execute(query);
+                return true;
+            }
+
+            return false;
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -235,7 +367,7 @@ public class DatabaseCon {
             Statement stmt = con.createStatement();
             stmt.execute("UPDATE user\n" +
                     "SET status = 1\n" +
-                    "WHERE Telegram_code = \"" + telegramCode + "\"");
+                    "WHERE Token = \"" + telegramCode + "\"");
             return true;
         } catch (SQLException e) {
             return false;
@@ -587,4 +719,12 @@ public class DatabaseCon {
             return null;
         }
     }
+
+    public static void main(String[] args) {
+        DatabaseCon db = new DatabaseCon();
+
+        db.addBanned(2, 212412313);
+//        System.out.println(db.containsOrderId(-385820343));
+    }
+
 }

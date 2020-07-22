@@ -206,8 +206,9 @@ public class Extract {
                 e.printStackTrace();
             }
 
-
         }
+
+
 
         db.addRestaurant(restaurantMap);
         db.addCategory(categoryList);

@@ -7,6 +7,7 @@ const mysql = require("mysql");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const path = require("path");
 
 const flash = require("express-flash");
 const session = require("express-session");
@@ -22,7 +23,7 @@ const db = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "Password123",
-    database: "usersdb"
+    database: "test_database"
 });
 
 // Remote database connection
@@ -48,7 +49,7 @@ app.use(express.static("views"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(flash());
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: "f56630f647222a5ae532556f2b634b920ef514b41553f977e1d1b88e5819cf84",
     resave: false,
     saveUninitialized: false
 }))
@@ -184,6 +185,26 @@ app.post("/check_email", function (req, res) {
                 return res.send("");
             }
         })
+})
+
+
+//Update data
+app.post("/update_address", async function (req, res) {
+    var new_address = "a";
+    var user_id = 1;
+    var email = "@example.com"
+
+    var data = [new_address, email, user_id];
+
+
+    db.query("UPDATE user SET Address = ?, Email = ? WHERE user_id = ?", data, 
+        (err, results, fields) => {
+            if (err) throw err;
+
+            console.log(results);
+        });
+
+    res.redirect("update_success.html");
 })
 
 

@@ -9,6 +9,7 @@ public class UserOrder {
     private List<Item> orders;
     private double totalPrice;
     private double deliveryCost;
+    private int joinTime;
     private String username;
     private UserStatus status;
 
@@ -32,6 +33,22 @@ public class UserOrder {
         return this.status;
     }
 
+    public List<Item> getOrders() {
+        return this.orders;
+    }
+
+    public double getDeliveryCost() {
+        return this.deliveryCost;
+    }
+
+    public double getTotalPrice() {
+        return this.totalPrice;
+    }
+
+    public int getJoinTime() {
+        return this.joinTime;
+    }
+
     public void setDeliveryCost(double deliveryCost) {
         this.deliveryCost = deliveryCost;
     }
@@ -50,6 +67,10 @@ public class UserOrder {
 
     public void setStatusToNotPaid() {
         this.status = UserStatus.NOT_PAID;
+    }
+
+    public void setJoinTime(int joinTime) {
+        this.joinTime = joinTime;
     }
 
 

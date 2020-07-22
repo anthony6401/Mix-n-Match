@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/start-discussion.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Start discussion</title>
+
+    <div id="header">
+        <h1>HEADER</h1>
+    </div>
+</head>
+<body>
+    <h1 class="title"><a href="forum.html">Community Forum</a></h1>
+
+    <div class="container">
+        <form action="#">
+            <div class="card">
+        
+                <p class="card-title bg-primary">Your Message</p>
+        
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend col-3">
+                            <label class="input-group-text col-12" for="post_in">Post in:</label>
+                        </div>
+                        <select class="custom-select" id="post_in">
+                            <option selected>Choose...</option>
+                            <option value="1">Getting started</option>
+                            <option value="2">General questions</option>
+                            <option value="3">Community</option>
+                        </select>
+                    </div>
+        
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend col-3">
+                            <label class="input-group-text col-12" for="title">Title:</label>
+                        </div>
+                        <input type="text" class="form-control" id="title" placeholder="Enter your title...">
+                    </div>
+        
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend col-3">
+                            <label class="input-group-text col-12" for="title">Message:</label>
+                        </div>
+                        <textarea class="form-control" aria-label="With textarea"
+                            placeholder="Enter your message..."></textarea>
+                    </div>
+                </div>
+        
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

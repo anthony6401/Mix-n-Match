@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <form id="form" action="/update_address" method="post">
+            <div id="address" name="address">
+                <label for="address_autocomplete">Address: </label>
+                <input id="autocomplete" name="address_autocomplete" size="30" placeholder="Enter your address"
+                    onFocus="geolocate()" type="text" />
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <input type="submit" value="submit button">
+            <br><br>
+        </form>
+    
+    <script src="js/autocomplete.js"></script>
+    <script src="js/update.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIWEKaDIthMAPmibgP4PEIUuNeCP69fi0&libraries=places&callback=initAutocomplete" async defer></script>
+</body>
+</html>

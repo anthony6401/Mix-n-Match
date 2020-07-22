@@ -44,6 +44,10 @@ form.addEventListener('submit', e => {
         e.preventDefault();
     }
 
+    if (document.getElementById("mobile_number_taken")) {
+        e.preventDefault();
+    }
+
     if (!validatePhoneNumber()) {
         e.preventDefault();
     }
@@ -138,14 +142,20 @@ function validateUniqueUsername() {
 }
 
 function validatePhoneNumber() {
-    var mobileNumberRegex = /[6|8|9]\d{7}|\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
+    var mobileNumberRegex;
     var mobile_number = document.getElementById("mobile_number");
-    var mobile_number_value = document.getElementById("mobile_number_input").value.match(mobileNumberRegex);
+    var mobile_number_value = document.getElementById("mobile_number_input").value;
     var mobile_number_error = document.getElementById("mobile_number_error");
 
-    console.log(mobile_number_value);
+    if (mobile_number_value.startsWith("+")) {
+        mobileNumberRegex = /\+65[6|8|9]\d{7}|\+65\s[6|8|9]\d{7}/g;
+    } else {
+        mobileNumberRegex = /[6|8|9]\d{7}/g;
+    }
+    var mobile_number_regex = document.getElementById("mobile_number_input").value.match(mobileNumberRegex);
+    console.log(mobile_number_regex);
 
-    if (mobile_number_value == null) {
+    if (mobile_number_regex == null) {
         if (mobile_number_error == null) {
             var create_mobile_number_error = document.createElement("P");
             create_mobile_number_error.setAttribute("id", "mobile_number_error");

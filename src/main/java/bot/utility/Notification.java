@@ -4,16 +4,21 @@ import bot.command.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Notification {
-    private final Integer telegram_id;
-    private final long chat_id;
-    private final ClientOrder co;
+    private Integer telegram_id;
+    private long chat_id;
+    private ClientOrder co;
     private final double RADIUS_NOTIFICATION = 0.5;
 
     public Notification(long chat_id, Integer telegram_id, ClientOrder co) {
         this.telegram_id = telegram_id;
         this.chat_id = chat_id;
+        this.co = co;
+    }
+
+    public Notification(ClientOrder co) {
         this.co = co;
     }
 
@@ -25,7 +30,7 @@ public class Notification {
                 "The group payment ended at " +
                 DateTime.unixTimeToDate(co.getStartTime() + co.getOrderTimeLimit() + co.getPaymentTimeLimit());
 
-        List<SendMessage> result = new ArrayList<>();
+            List<SendMessage> result = new ArrayList<>();
 
         List<UserInfo> userInfoList = Command.db.getListOfOnlineUserExceptUser(telegram_id);
         PlaceInfo pi = Command.googleMap.getPlaceCoordinates(co.getTo());
@@ -49,6 +54,31 @@ public class Notification {
         message.setChatId((long) 861353631);
         message.setText(botMessage);
         result.add(message);
+
+        return result;
+    }
+
+    public List<SendMessage> notifyUserForOrderTimesUp() {
+
+        List<SendMessage> result = new ArrayList<>();
+
+        for (Map.Entry<Integer, UserOrder> entry : co.entrySet()) {
+            SendMessage message = new SendMessage();
+            message.setChatId((long) entry.getKey());
+            UserOrder uo = entry.getValue();
+            StringBuffer sb = new StringBuffer();
+            sb.append("Here is your order detail!\n");
+
+            for (Item item : uo.getOrders()) {
+                sb.append(item.toString() + "\n");
+            }
+            sb.append("Delivery cost: $" + uo.getDeliveryCost() + "\n");
+            sb.append("Please pay $"
+                    + (uo.getTotalPrice() + uo.getDeliveryCost()) + " to " + co.getMobileNumber());
+            String botMessage = sb.toString();
+            message.setText(botMessage);
+            result.add(message);
+        }
 
         return result;
     }

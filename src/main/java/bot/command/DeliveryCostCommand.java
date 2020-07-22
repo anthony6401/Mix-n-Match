@@ -1,6 +1,10 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
+import bot.utility.Notification;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
+import java.util.List;
 
 public class DeliveryCostCommand implements Command {
     private final String deliveryCost;
@@ -32,5 +36,10 @@ public class DeliveryCostCommand implements Command {
 
         co.setDeliveryCost(Double.valueOf(deliveryCost));
         return "Successfully adding the delivery cost!";
+    }
+
+    public List<SendMessage> sendPaymentInfo() {
+        Notification notification = new Notification(co);
+        return notification.notifyUserForOrderTimesUp();
     }
 }

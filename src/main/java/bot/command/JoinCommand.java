@@ -31,7 +31,7 @@ public class JoinCommand implements Command {
         }
 
         co.addUser(telegram_id, username);
-        db.addHistory(DateTime.unixTimeToDate(co.getStartTime()), telegram_id, co.getFrom(), co.getTo());
+        co.getUser(telegram_id).setJoinTime(chatTime);
         return "Successfully join a group!\n" +
                 "Here is the group invite link: " + co.getInviteLink();
 
