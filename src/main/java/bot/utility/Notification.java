@@ -2,6 +2,9 @@ package bot.utility;
 
 import bot.command.Command;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,7 @@ public class Notification {
 
     public List<SendMessage> notifyUser() {
         String botMessage = "Someone is ordering from " + co.getFrom() + " to " + co.getTo() + ".\n" +
-                "To join the group, please type /join " + chat_id + "\n" +
+                "To join the group, press the button below\n" +
                 "The group order ended at " +
                 DateTime.unixTimeToDate(co.getStartTime() + co.getOrderTimeLimit()) + "\n" +
                 "The group payment ended at " +
@@ -46,6 +49,17 @@ public class Notification {
                 message.setChatId(ui.getChatID());
                 message.setText(botMessage);
                 result.add(message);
+
+                InlineKeyboardMarkup inkMarkup = new InlineKeyboardMarkup();
+                InlineKeyboardButton ikButton = new InlineKeyboardButton();
+                List<List<InlineKeyboardButton>> list = new ArrayList<>();
+                List<InlineKeyboardButton> ikButtonList = new ArrayList<>();
+                ikButton.setText("join");
+                ikButton.setCallbackData("/join " + chat_id);
+                ikButtonList.add(ikButton);
+                list.add(ikButtonList);
+                inkMarkup.setKeyboard(list);
+                message.setReplyMarkup(inkMarkup);
             }
         }
 
@@ -54,6 +68,17 @@ public class Notification {
         message.setChatId((long) 861353631);
         message.setText(botMessage);
         result.add(message);
+
+        InlineKeyboardMarkup inkMarkup = new InlineKeyboardMarkup();
+        InlineKeyboardButton ikButton = new InlineKeyboardButton();
+        List<List<InlineKeyboardButton>> list = new ArrayList<>();
+        List<InlineKeyboardButton> ikButtonList = new ArrayList<>();
+        ikButton.setText("join");
+        ikButton.setCallbackData("/join " + chat_id);
+        ikButtonList.add(ikButton);
+        list.add(ikButtonList);
+        inkMarkup.setKeyboard(list);
+        message.setReplyMarkup(inkMarkup);
 
         return result;
     }

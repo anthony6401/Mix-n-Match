@@ -722,9 +722,11 @@ public class DatabaseCon {
 
     public static void main(String[] args) {
         DatabaseCon db = new DatabaseCon();
+        db.addHistory("17-01-2011", 3.2, 861353631, "orderfrom", "orderto", 123);
 
-        db.addBanned(2, 212412313);
+//        db.addBanned(2, 212412313);
 //        System.out.println(db.containsOrderId(-385820343));
     }
+
 
 }

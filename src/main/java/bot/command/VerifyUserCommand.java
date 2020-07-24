@@ -35,7 +35,7 @@ public class VerifyUserCommand implements Command {
             for (Map.Entry<Integer, UserOrder> entry : co.entrySet()) {
                 System.out.println(username);
                 if (entry.getValue().getUsername().equals(username) ||
-                entry.getValue().getUsername().equals("@" + username)) {
+                        ("@" + entry.getValue().getUsername()).equals(username)) {
                     co.get(entry.getKey()).setStatusToPaid();
                     return "Successfully verifying the user's payment!";
                 }

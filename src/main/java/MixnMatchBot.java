@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
@@ -19,24 +21,40 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Long chat_id = update.getMessage().getChatId();
-        Integer telegram_id = update.getMessage().getFrom().getId();
-        Integer time = update.getMessage().getDate();
-        SendMessage message = new SendMessage();
-
-        // Setting the chat id to where the message wil be sent.
-        message.setChatId(chat_id);
-
-        // Seperate the command and the argument
-        String[] query = update.getMessage().getText().split("\\s", 2);
-        // bot.Command.Command inputted
-        String commandString = query[0];
+        Long chat_id = null;
+        Integer telegram_id = null;
+        Integer time = null;
+        String[] query = null;
+        String username = null;
+        String commandString = null;
         String arg = null;
-        if (query.length != 1) {
-            arg = query[1];
+
+        if (update.getMessage() != null) {
+            chat_id = update.getMessage().getChatId();
+            telegram_id = update.getMessage().getFrom().getId();
+            time = update.getMessage().getDate();
+            query = update.getMessage().getText().split("\\s", 2);
+            username = update.getMessage().getFrom().getUserName();
+        // Callback query
+        } else {
+            chat_id = update.getCallbackQuery().getMessage().getChatId();
+            time = update.getCallbackQuery().getMessage().getDate();
+            telegram_id = update.getCallbackQuery().getMessage().getChat().getId().intValue();
+            query = update.getCallbackQuery().getData().split("\\s" , 2);
+            username = update.getCallbackQuery().getFrom().getUserName();
         }
 
-        System.out.println(arg);
+        SendMessage message = new SendMessage();
+
+        if (query != null) {
+            commandString = query[0];
+            if (query.length != 1) {
+                arg = query[1];
+            }
+        }
+
+        System.out.println("commandString " + commandString);
+        System.out.println("arg "  + arg);
 
         Command command = null;
 
@@ -58,7 +76,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
             } else if (commandString.startsWith("/foodinfo")) {
                 command = new FoodInfoCommand(arg, chat_id);
             } else if (commandString.startsWith("/history")) {
-                String username = update.getMessage().getFrom().getUserName();
                 command = new HistoryCommand(username, telegram_id);
             } else if (chat_id < 0) {
 
@@ -85,7 +102,6 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     } else if (commandString.startsWith("/paymenttime")) {
                         command = new PaymentTimeCommand(map, arg, chat_id);
                     } else if (commandString.startsWith("/finalizeorder")) {
-                        String username = update.getMessage().getFrom().getUserName();
                         ClientOrder co = map.get(chat_id);
                         command = new FinalizeOrderCommand(username, telegram_id, chat_id, time, co);
                     } else if (commandString.startsWith("/reset")) {
@@ -123,13 +139,15 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                     command = new StartCommand(arg, telegram_id);
                     // Join command
                 } else if (commandString.startsWith("/join")) {
-                    String username = update.getMessage().getFrom().getUserName();
                     ClientOrder co = map.get(Long.valueOf(arg));
+                    System.out.println(telegram_id);
                     command = new JoinCommand(username, telegram_id, time, co);
                     // Logout command
                 } else if (commandString.startsWith("/logout")) {
                     command = new LogoutCommand(telegram_id);
                     // If the user tries to use commands available only on groups
+                } else if (commandString.startsWith("/seemap")) {
+                    System.out.println(this.map);
                 } else {
                     command = new NotInGroupCommand();
                 }
@@ -203,6 +221,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
 
                             // Sending the message for the payment period is up
                             Timer timer = new Timer();
+                            Long chat_id = update.getMessage().getChatId();
                             timer.schedule(new TimerTask() {
                                 @Override
                                 public void run() {

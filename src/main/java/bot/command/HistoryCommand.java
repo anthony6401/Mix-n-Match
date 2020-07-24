@@ -19,7 +19,8 @@ public class HistoryCommand implements Command {
             return "You do not have any order history!";
         }
 
-        return username + "'s history:\n" + db.getHistory(telegram_id);
+        return username + "'s history:\n" + db.getHistory(telegram_id) + "\n" +
+                "For more information, please visit the website!";
     }
 
 }

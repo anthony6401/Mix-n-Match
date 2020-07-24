@@ -1,7 +1,6 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
-import bot.utility.DateTime;
 
 public class JoinCommand implements Command {
     private final String username;
