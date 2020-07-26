@@ -22,6 +22,7 @@ public class OrderToCommand implements Command {
             return "You did not specify where you want to order to!";
         }
 
+
         String place = googleMap.findPlace(arg);
 
         if (place.startsWith("No place found")) {

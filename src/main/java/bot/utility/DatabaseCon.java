@@ -7,7 +7,12 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class DatabaseCon {
-    public static String url = "jdbc:mysql://localhost:3306/test_database?serverTimezone=MST";
+
+    // Remote database
+    public static String url = "jdbc:mysql://b478c8e43022e6:f84cd5ef@us-cdbr-east-02.cleardb.com/heroku_f8f71944af9b502?reconnect=true";
+
+    // Local database
+//    public static String url = "jdbc:mysql://localhost:3306/test_database?serverTimezone=MST";
     public static String user = "root";
     public static String password = "Password123";
 
@@ -20,9 +25,11 @@ public class DatabaseCon {
     }
 
     public void createDatabase() {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             Scanner sc1 = new Scanner(DatabaseQuery.query1);
             while (sc1.hasNext()) {
@@ -115,14 +122,21 @@ public class DatabaseCon {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean containsOrderId(long order_id) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM history WHERE order_id = " + order_id);
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM history WHERE order_id = " + order_id);
             rs.next();
 
             int orderID = rs.getInt(3);
@@ -131,43 +145,66 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
 
     public int getBannedTime(long telegram_id) {
-        try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
-            ResultSet rs = stmt.executeQuery("SELECT unix_unbanned FROM user_banned WHERE telegram_id = " + telegram_id);
+        try {
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+
+            rs = stmt.executeQuery("SELECT unix_unbanned FROM user_banned WHERE telegram_id = " + telegram_id);
 
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
             return -1;
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
 
     public int getBannedID(long telegram_id) {
-        try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
-            ResultSet rs = stmt.executeQuery("SELECT telegram_id FROM user_banned WHERE telegram_id = " + telegram_id);
+        try {
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+
+            rs = stmt.executeQuery("SELECT telegram_id FROM user_banned WHERE telegram_id = " + telegram_id);
             rs.next();
             return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
             return -1;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean addBanned(long telegram_id, int timeForUnbanned) {
+        Connection con = null;
+        Statement stmt = null;
+
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             int bannedID = getBannedID(telegram_id);
             System.out.println(bannedID);
@@ -182,15 +219,21 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean isBanned(long telegram_id, int timeNow) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT * FROM user_banned WHERE telegram_id = " + telegram_id);
+            rs = stmt.executeQuery("SELECT * FROM user_banned WHERE telegram_id = " + telegram_id);
 
             rs.next();
 
@@ -199,42 +242,61 @@ public class DatabaseCon {
             return unbanned_time - timeNow > 0;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean containsUser(String telegramCode) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT Token\n" +
+            rs = stmt.executeQuery("SELECT Token\n" +
                     "FROM user\n" +
                     "WHERE Token = \"" + telegramCode + "\"");
             rs.next();
             return rs.getString(1).equals(telegramCode);
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean addTelegramInformation(String telegramCode, Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             stmt.execute("UPDATE user\n" +
                     "SET Telegram_id = " + telegram_id + "\n" +
                     "WHERE Token = \"" + telegramCode + "\"");
             return true;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean isOnline(Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Status\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT Status\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id);
 
@@ -247,17 +309,24 @@ public class DatabaseCon {
             return false;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String getHistory(Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             int userID = getUserID(telegram_id);
 
-            ResultSet rs = stmt.executeQuery("SELECT date, order_from, order_to\n" +
+            rs = stmt.executeQuery("SELECT date, order_from, order_to\n" +
                     "FROM history\n" +
                     "WHERE user_id = " + userID);
 
@@ -273,15 +342,22 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return "";
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public int getUserID(Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT user_id\n" +
+            rs = stmt.executeQuery("SELECT user_id\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id + " AND STATUS = 1");
             rs.next();
@@ -289,13 +365,20 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return -1;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean addHistory(String date, double deliveryCost, Integer telegram_id, String from, String to, long order_id) {
+        Connection con = null;
+        Statement stmt = null;
+
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             int userID = getUserID(telegram_id);
             if (userID != -1) {
                 stmt.execute("INSERT INTO history\n" +
@@ -308,13 +391,18 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean addFoodHistory(long order_id, int telegram_id, UserOrder uo) {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             int userID = getUserID(telegram_id);
 
@@ -337,16 +425,22 @@ public class DatabaseCon {
             return false;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public List<UserInfo> getListOfOnlineUserExceptUser(Integer telegram_id) {
         List<UserInfo> result = new ArrayList<>();
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Telegram_id, Longitude, Latitude\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT Telegram_id, Longitude, Latitude\n" +
                     "FROM user\n" +
                     "WHERE Status = 1 AND Telegram_id != " + telegram_id);
 
@@ -356,56 +450,80 @@ public class DatabaseCon {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
 
         return result;
     }
 
     public boolean updateOnline(String telegramCode) {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             stmt.execute("UPDATE user\n" +
                     "SET status = 1\n" +
                     "WHERE Token = \"" + telegramCode + "\"");
             return true;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public boolean updateOffline(Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             stmt.execute("UPDATE user\n" +
                     "SET status = 2\n" +
                     "WHERE Telegram_id = " + telegram_id);
             return true;
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String getMobileNumber(Integer telegram_id) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT Mobile_number\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT Mobile_number\n" +
                     "FROM user\n" +
                     "WHERE Telegram_id = " + telegram_id + " AND STATUS = 1");
             rs.next();
             return rs.getString(1);
         } catch (SQLException e) {
             return null;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public int getRestaurantID(String name) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT restaurant_id\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT restaurant_id\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + name + "%\"");
 
@@ -413,14 +531,21 @@ public class DatabaseCon {
             return rs.getInt(1);
         } catch (SQLException e) {
             return -1;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public int getCategoryID(String category) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT category_id\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT category_id\n" +
                     "FROM category_list\n" +
                     "WHERE name = \"" + category + "\"");
 
@@ -428,6 +553,10 @@ public class DatabaseCon {
             return rs.getInt(1);
         } catch (SQLException e) {
             return -1;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -437,9 +566,12 @@ public class DatabaseCon {
 
 
     public boolean addRestaurant(Map<RestaurantInfo, Integer> restaurantMap) {
+        Connection con = null;
+        Statement stmt = null;
+
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmtUser = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             StringBuffer sb = new StringBuffer();
 
@@ -457,7 +589,7 @@ public class DatabaseCon {
                 String categoryQuery = "INSERT INTO restaurant_category\n" +
                         "VALUES(DEFAULT, \"" + name + "\", " + category_id + ")";
 
-                stmtUser.execute(categoryQuery);
+                stmt.execute(categoryQuery);
 
                 if (deliveryHours == null) {
                     sb.append("(" + restaurant_id + ", \"" + name + "\", " +
@@ -471,21 +603,26 @@ public class DatabaseCon {
             String query = sb.toString();
             query = query.substring(0, query.length() - 2);
 
-            stmtUser.execute(query);
+            stmt.execute(query);
 
             return true;
 
         } catch (SQLException e) {
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
 
 
     public boolean addFoodInfo(List<ItemForDB> items) {
+        Connection con = null;
+        Statement stmt = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             StringBuffer sb = new StringBuffer();
 
             sb.append("INSERT INTO food_list VALUES ");
@@ -523,14 +660,20 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
 
     }
 
     public boolean addCategory(List<CategoryForDB> list) {
+        Connection con = null;
+        Statement stmt = null;
+
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmtUser = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
             StringBuffer sb = new StringBuffer();
             sb.append("INSERT INTO category_list VALUES ");
@@ -548,20 +691,26 @@ public class DatabaseCon {
             String query = sb.toString();
             query = query.substring(0, query.length() - 2);
 
-            stmtUser.execute(query);
+            stmt.execute(query);
             return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }  finally {
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String getAllCategory() {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT name\n" +
                     "FROM category_list\n" +
                     "WHERE category_id >= 1");
             StringBuilder sb = new StringBuilder();
@@ -575,15 +724,22 @@ public class DatabaseCon {
             return sb.toString().trim();
         } catch (SQLException e) {
             return "";
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public Pair orderFromSearch(String restaurant) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
 
-            ResultSet rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
+            rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + restaurant + "%\"");
             rs.next();
@@ -591,13 +747,20 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return new Pair("No restaurant found", null);
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String getRestaurantList(String category) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
             ResultSet rsID = stmt.executeQuery("SELECT *\n" +
@@ -609,7 +772,7 @@ public class DatabaseCon {
             String categorySearched = rsID.getString(2);
             int category_id = rsID.getInt(1);
 
-            ResultSet rs = stmt.executeQuery("SELECT rc.restaurant_name, delivery_hours\n" +
+            rs = stmt.executeQuery("SELECT rc.restaurant_name, delivery_hours\n" +
                     "FROM restaurant_category rc\n" +
                     "JOIN restaurant_list rl\n" +
                     "ON rc.restaurant_name = rl.name\n" +
@@ -627,14 +790,21 @@ public class DatabaseCon {
             e.printStackTrace();
             return "Invalid category. Please use /categorylist to see all " +
                     "the available category.";
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String getRestaurantMenu(String restaurant) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
 
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
             ResultSet rsID = stmt.executeQuery("SELECT *\n" +
@@ -646,7 +816,7 @@ public class DatabaseCon {
             String restaurantSearched = rsID.getString(2);
             int restaurant_id = rsID.getInt(1);
 
-            ResultSet rs = stmt.executeQuery("SELECT name, price\n" +
+            rs = stmt.executeQuery("SELECT name, price\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurant_id + "\n" +
                     "ORDER BY name");
@@ -662,16 +832,23 @@ public class DatabaseCon {
             e.printStackTrace();
             return "Invalid restaurant. Please use /searchrestaurant to see all" +
                     "the available restaurant.";
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public String searchRestaurant(String keyword) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             StringBuilder sb = new StringBuilder();
 
-            ResultSet rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
+            rs = stmt.executeQuery("SELECT name, delivery_hours\n" +
                     "FROM restaurant_list\n" +
                     "WHERE name LIKE \"%" + keyword + "%\"");
 
@@ -684,14 +861,21 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return "No restaurant found";
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public Item findItem(String item, int restaurantID) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT name, price\n" +
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
+            rs = stmt.executeQuery("SELECT name, price\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
             rs.next();
@@ -700,15 +884,22 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     public DescAndURL getItemDescAndURL(String item, String restaurantName) {
+        Connection con = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection con = DriverManager.getConnection(url, user, password);
-            Statement stmt = con.createStatement();
+            con = DriverManager.getConnection(url, user, password);
+            stmt = con.createStatement();
             int restaurantID = getRestaurantID(restaurantName);
-            ResultSet rs = stmt.executeQuery("SELECT description, url\n" +
+            rs = stmt.executeQuery("SELECT description, url\n" +
                     "FROM food_list\n" +
                     "WHERE restaurant_id = " + restaurantID + " AND name LIKE \"%" + item + "%\"");
             rs.next();
@@ -717,16 +908,13 @@ public class DatabaseCon {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }  finally {
+            try { rs.close(); } catch (Exception e) { /* ignored */ }
+            try { stmt.close(); } catch (Exception e) { /* ignored */ }
+            try { con.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
-    public static void main(String[] args) {
-        DatabaseCon db = new DatabaseCon();
-        db.addHistory("17-01-2011", 3.2, 861353631, "orderfrom", "orderto", 123);
-
-//        db.addBanned(2, 212412313);
-//        System.out.println(db.containsOrderId(-385820343));
-    }
 
 
 }

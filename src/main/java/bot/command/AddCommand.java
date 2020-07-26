@@ -53,8 +53,7 @@ public class AddCommand implements Command {
                 try {
                     co.addOrder(telegram_id, itemSearched);
                 } catch (NoSuchUserExistException e) {
-                    return "The user can't be found. Please reset using /logout " +
-                            "and login using the link provided in the website!";
+                    return "The user can't be found!";
                 }
             }
         }

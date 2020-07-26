@@ -12,7 +12,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,7 +150,6 @@ public class Extract {
                                                                List<ItemForDB> list, Map<RestaurantInfo, Integer> restaurantMap) {
         return CompletableFuture.supplyAsync(() -> {
             boolean toAddFood = !restaurantMap.containsKey(restaurantInfo);
-//            boolean toAddFood = db.addRestaurant(restaurantName, restaurant_id, category_id, deliveryHours);
             if (toAddFood) {
                 restaurantMap.put(restaurantInfo, restaurant_id);
                 try {
@@ -159,10 +157,6 @@ public class Extract {
                     List<ItemForDB> items = getFoodInfo(url, restaurant_id);
                     if (items.size() != 0) {
                         list.addAll(items);
-//                        for (ItemForDB item : items) {
-//                            db.addFoodInfo(item, restaurant_id);
-//
-//                        }
                     }
                 } catch (FailingHttpStatusCodeException e) {
                     System.out.println("Page is error.");
@@ -174,7 +168,6 @@ public class Extract {
 
     public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
-        int count = 0;
         int restaurant_id = 1;
         int category_id = 1;
         List<CategoryInfo> categories = getCategory(foodPandaURL);
@@ -190,12 +183,10 @@ public class Extract {
             List<CompletableFuture<Boolean>> async = new ArrayList<>();
 
             for (RestaurantInfo restaurantInfo : restaurantInfos) {
-
                 CompletableFuture<Boolean> addInfo = addRestaurantAndFoodInfo(restaurantInfo,
                         restaurant_id, foodList, restaurantMap);
                 restaurant_id++;
                 async.add(addInfo);
-                count++;
 
             }
 
@@ -205,7 +196,6 @@ public class Extract {
             } catch (CompletionException e) {
                 e.printStackTrace();
             }
-
         }
 
 

@@ -1,8 +1,7 @@
 package bot.utility;
 
 public class DatabaseQuery {
-    //    "USE `heroku_47d4df56b19426e`;\n" +
-    public static String query1 = "USE `test_database`;\n" +
+    public static String query1 = "USE `heroku_f8f71944af9b502`;\n" +
             "/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n" +
             "/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n" +
             "/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n" +
@@ -32,7 +31,7 @@ public class DatabaseQuery {
             "`order_id` int NOT NULL,\n" +
             "`item` varchar(1000) NOT NULL,\n" +
             "  PRIMARY KEY (`fh_id`)\n" +
-            ") ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+            ") ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
     public static String query3 = "/*!40101 SET character_set_client = @saved_cs_client */;\n" +
             "/*!40101 SET @saved_cs_client     = @@character_set_client */;\n" +
@@ -69,7 +68,7 @@ public class DatabaseQuery {
     public static String CREATE_RESTAURANT_LIST = "CREATE TABLE `restaurant_list` (\n" +
             "`restaurant_id` int NOT NULL AUTO_INCREMENT,\n" +
             "`name` varchar(100) NOT NULL,\n" +
-            "`delivery_hours` varchar(100) DEFAULT NULL,\n" +
+            "`delivery_hours` varchar(300) DEFAULT NULL,\n" +
             "PRIMARY KEY (`restaurant_id`)\n" +
             ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;";
 
@@ -100,6 +99,7 @@ public class DatabaseQuery {
             "`user_id` int NOT NULL,\n" +
             "`order_id` int NOT NULL,\n" +
             "`date` varchar(45) NOT NULL,\n" +
+            "`delivery_cost` float NOT NULL,\n" +
             "`order_from` varchar(100) NOT NULL,\n" +
             "`order_to` varchar(100) NOT NULL,\n" +
             "PRIMARY KEY (`history_id`)\n" +

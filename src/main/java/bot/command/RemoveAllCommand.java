@@ -23,8 +23,7 @@ public class RemoveAllCommand implements Command {
             co.deleteAllOrderFromUser(telegram_id);
             return "Successfully removing all the orders!";
         } catch (NoSuchUserExistException e) {
-            return "The user can't be found. Please reset using /logout " +
-                    "and login using the link provided in the website!";
+            return "The user can't be found!";
         }
     }
 }

@@ -1,7 +1,7 @@
 package bot.command;
 
 import bot.utility.ClientOrder;
-import bot.utility.DateTime;
+import bot.utility.UserStatus;
 
 public class ExitGroupCommand implements Command {
     private final Integer telegram_id;
@@ -20,6 +20,10 @@ public class ExitGroupCommand implements Command {
 
         if (!co.containsUser(telegram_id)) {
             return "You did not belong to this group!";
+        }
+
+        if (co.getUser(telegram_id).getStatus() == UserStatus.ORDEREE) {
+            return "You are the orderee. Please don't exit!";
         }
 
         co.deleteUser(telegram_id);

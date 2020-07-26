@@ -38,10 +38,11 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         // Callback query
         } else {
             chat_id = update.getCallbackQuery().getMessage().getChatId();
-            time = update.getCallbackQuery().getMessage().getDate();
             telegram_id = update.getCallbackQuery().getMessage().getChat().getId().intValue();
             query = update.getCallbackQuery().getData().split("\\s" , 2);
             username = update.getCallbackQuery().getFrom().getUserName();
+            time = (int) (System.currentTimeMillis() / 1000L);
+
         }
 
         SendMessage message = new SendMessage();
