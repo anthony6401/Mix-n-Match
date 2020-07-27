@@ -6,8 +6,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
@@ -35,11 +33,11 @@ public class MixnMatchBot extends TelegramLongPollingBot {
             time = update.getMessage().getDate();
             query = update.getMessage().getText().split("\\s", 2);
             username = update.getMessage().getFrom().getUserName();
-        // Callback query
+            // Callback query
         } else {
             chat_id = update.getCallbackQuery().getMessage().getChatId();
             telegram_id = update.getCallbackQuery().getMessage().getChat().getId().intValue();
-            query = update.getCallbackQuery().getData().split("\\s" , 2);
+            query = update.getCallbackQuery().getData().split("\\s", 2);
             username = update.getCallbackQuery().getFrom().getUserName();
             time = (int) (System.currentTimeMillis() / 1000L);
 
@@ -55,7 +53,7 @@ public class MixnMatchBot extends TelegramLongPollingBot {
         }
 
         System.out.println("commandString " + commandString);
-        System.out.println("arg "  + arg);
+        System.out.println("arg " + arg);
 
         Command command = null;
 
@@ -79,10 +77,10 @@ public class MixnMatchBot extends TelegramLongPollingBot {
             } else if (commandString.startsWith("/history")) {
                 command = new HistoryCommand(username, telegram_id);
             } else if (chat_id < 0) {
-
-                System.out.println(chat_id);
-                // Checking if the user is login or not.
-                if (!db.isOnline(telegram_id)) {
+                if (username == null) {
+                    command = new NoUsernameCommand();
+                    // Checking if the user is login or not.
+                } else if (!db.isOnline(telegram_id)) {
                     command = new UserIsOfflineCommand();
                 } else {
                     if (commandString.startsWith("/orderstatus")) {
@@ -134,21 +132,21 @@ public class MixnMatchBot extends TelegramLongPollingBot {
                 }
                 // If the user tries message the bot through private message
             } else if (chat_id > 0) {
-                // Start of the bot using the identifier gotten from the website.
+                    // Start of the bot using the identifier gotten from the website.
                 if (commandString.startsWith("/start")) {
                     // If the user tries to use the bot without logging in from the website
                     command = new StartCommand(arg, telegram_id);
-                    // Join command
-                } else if (commandString.startsWith("/join")) {
-                    ClientOrder co = map.get(Long.valueOf(arg));
-                    System.out.println(telegram_id);
-                    command = new JoinCommand(username, telegram_id, time, co);
-                    // Logout command
                 } else if (commandString.startsWith("/logout")) {
                     command = new LogoutCommand(telegram_id);
+                } else if (commandString.startsWith("/join")) {
+                    if (username == null) {
+                        command = new NoUsernameCommand();
+                    } else {
+                        ClientOrder co = map.get(Long.valueOf(arg));
+                        System.out.println(telegram_id);
+                        command = new JoinCommand(username, telegram_id, time, co);
+                    }
                     // If the user tries to use commands available only on groups
-                } else if (commandString.startsWith("/seemap")) {
-                    System.out.println(this.map);
                 } else {
                     command = new NotInGroupCommand();
                 }

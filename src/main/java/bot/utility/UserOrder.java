@@ -84,6 +84,7 @@ public class UserOrder {
         for (int i = 0; i < orders.size(); i++) {
             if (StringUtils.containsIgnoreCase(orders.get(i).getName(), order)) {
                 toBeRemoved = this.orders.remove(i);
+                break;
             }
         }
 

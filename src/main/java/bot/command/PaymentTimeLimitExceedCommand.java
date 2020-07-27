@@ -25,8 +25,10 @@ public class PaymentTimeLimitExceedCommand implements Command {
             UserOrder uo = entry.getValue();
 
             if (uo.getStatus() == UserStatus.PAID || uo.getStatus() == UserStatus.ORDEREE) {
-                db.addFoodHistory(order_id, telegram_id, uo);
-                db.addHistory(DateTime.unixTimeToDate(uo.getJoinTime()), uo.getDeliveryCost(), telegram_id, co.getFrom(), co.getTo(), order_id);
+                if (!uo.getOrders().isEmpty()) {
+                    db.addFoodHistory(order_id, telegram_id, uo);
+                    db.addHistory(DateTime.unixTimeToDate(uo.getJoinTime()), uo.getDeliveryCost(), telegram_id, co.getFrom(), co.getTo(), order_id);
+                }
             } else {
                 int time = co.getStartTime() + co.getOrderTimeLimit() + co.getPaymentTimeLimit() + ONE_MINUTE;
                 db.addBanned(telegram_id, time);

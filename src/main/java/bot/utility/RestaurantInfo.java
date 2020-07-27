@@ -33,7 +33,7 @@ public class RestaurantInfo {
     public boolean equals(Object obj) {
         if (obj instanceof RestaurantInfo) {
             RestaurantInfo object = (RestaurantInfo) obj;
-            return object.restaurantName == this.restaurantName;
+            return object.restaurantName.equals(this.restaurantName);
         }
 
         return false;

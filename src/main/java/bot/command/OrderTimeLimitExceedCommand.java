@@ -16,6 +16,7 @@ public class OrderTimeLimitExceedCommand implements Command {
     @Override
     public String execute() {
         return "Time's up! Please proceed to the payment!\n" +
-                "Here is the phone number to pay to: " + co.getMobileNumber();
+                "Here is the phone number to pay to: " + co.getMobileNumber() + "\n" +
+                "Please don't forget to use /deliverycost!";
     }
 }

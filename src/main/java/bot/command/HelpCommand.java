@@ -11,7 +11,7 @@ public class HelpCommand implements Command {
         return "Welcome to Mix n Match Bot!\n" +
                 "This bot helps to collate people who want to order from the same restaurant to a certain location.\n" +
                 "The one who starts the order (orderee) will take all the payments and order the food through foodPanda" +
-                "or other platforms.\n\n" +
+                " or other platforms.\n\n" +
                 "There are 2 periods, the first period will be order period and the next one will be payment period.\n" +
                 "During the order period, the user can add and remove orders.\n" +
                 "During the payment period, the orderee " +

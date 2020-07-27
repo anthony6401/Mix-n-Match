@@ -82,6 +82,7 @@ public class Extract {
 
         try {
             HtmlPage page = client.getPage(url);
+            System.out.println(url);
             List<HtmlElement> URLs = (List<HtmlElement>) page.getByXPath("//li/a");
 
             for (HtmlElement element : URLs) {
@@ -168,6 +169,7 @@ public class Extract {
 
     public void extract(String foodPandaURL) {
         DatabaseCon db = new DatabaseCon();
+        int count = 0;
         int restaurant_id = 1;
         int category_id = 1;
         List<CategoryInfo> categories = getCategory(foodPandaURL);
@@ -175,6 +177,7 @@ public class Extract {
         List<ItemForDB> foodList = new ArrayList<>();
         Map<RestaurantInfo, Integer> restaurantMap = new HashMap<>();
         for (CategoryInfo category : categories) {
+
             String cat = category.getCategory();
             String URL = category.getURL();
 
@@ -187,6 +190,7 @@ public class Extract {
                         restaurant_id, foodList, restaurantMap);
                 restaurant_id++;
                 async.add(addInfo);
+                count++;
 
             }
 
@@ -196,6 +200,7 @@ public class Extract {
             } catch (CompletionException e) {
                 e.printStackTrace();
             }
+
         }
 
 

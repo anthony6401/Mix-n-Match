@@ -20,7 +20,7 @@ public class HistoryCommand implements Command {
         }
 
         return username + "'s history:\n" + db.getHistory(telegram_id) + "\n" +
-                "For more information, please visit the website!";
+                "For more information, please visit the https://mix-n-match-orbital.herokuapp.com!";
     }
 
 }

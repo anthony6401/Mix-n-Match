@@ -64,21 +64,21 @@ public class Notification {
         }
 
         // Test by sending the notification to myself
-        SendMessage message = new SendMessage();
-        message.setChatId((long) 861353631);
-        message.setText(botMessage);
-        result.add(message);
-
-        InlineKeyboardMarkup inkMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton ikButton = new InlineKeyboardButton();
-        List<List<InlineKeyboardButton>> list = new ArrayList<>();
-        List<InlineKeyboardButton> ikButtonList = new ArrayList<>();
-        ikButton.setText("join");
-        ikButton.setCallbackData("/join " + chat_id);
-        ikButtonList.add(ikButton);
-        list.add(ikButtonList);
-        inkMarkup.setKeyboard(list);
-        message.setReplyMarkup(inkMarkup);
+//        SendMessage message = new SendMessage();
+//        message.setChatId((long) 861353631);
+//        message.setText(botMessage);
+//        result.add(message);
+//
+//        InlineKeyboardMarkup inkMarkup = new InlineKeyboardMarkup();
+//        InlineKeyboardButton ikButton = new InlineKeyboardButton();
+//        List<List<InlineKeyboardButton>> list = new ArrayList<>();
+//        List<InlineKeyboardButton> ikButtonList = new ArrayList<>();
+//        ikButton.setText("join");
+//        ikButton.setCallbackData("/join " + chat_id);
+//        ikButtonList.add(ikButton);
+//        list.add(ikButtonList);
+//        inkMarkup.setKeyboard(list);
+//        message.setReplyMarkup(inkMarkup);
 
         return result;
     }
@@ -99,7 +99,7 @@ public class Notification {
             }
             sb.append("Delivery cost: $" + uo.getDeliveryCost() + "\n");
             sb.append("Please pay $"
-                    + (uo.getTotalPrice() + uo.getDeliveryCost()) + " to " + co.getMobileNumber());
+                    + String.format("%.2f", (uo.getTotalPrice() + uo.getDeliveryCost())) + " to " + co.getMobileNumber());
             String botMessage = sb.toString();
             message.setText(botMessage);
             result.add(message);

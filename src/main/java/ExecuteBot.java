@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class ExecuteBot {
     public static void main(String[] args) {
-        WebExtraction.main(new String[0]);
+//        WebExtraction.main(new String[0]);
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {

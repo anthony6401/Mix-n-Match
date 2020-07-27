@@ -23,6 +23,7 @@ public class CommandListCommand implements Command {
                 " /ordertime, and /paymenttime first\n" +
                 "reset -- Reset all the order. Can't be used after finalizing the order\n" +
                 "orderstatus -- See the current order status\n" +
+                "exitgroup -- To exit the group\n" +
                 "categorylist -- See all the category available\n" +
                 "restaurantlist -- See all the restaurant under certain category\n" +
                 "menu -- See the menu of a certain restaurant\n" +

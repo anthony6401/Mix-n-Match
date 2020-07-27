@@ -36,8 +36,8 @@ public class Item {
     @Override
     public String toString() {
         if (desc == null) {
-            return this.name + " price: " + this.price;
+            return this.name + " price: $" + this.price;
         }
-        return this.name + " price: " + this.price + " -- " + this.desc;
+        return this.name + " price: $" + this.price + " -- " + this.desc;
     }
 }

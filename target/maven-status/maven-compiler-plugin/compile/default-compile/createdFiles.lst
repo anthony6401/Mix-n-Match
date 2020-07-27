@@ -21,6 +21,7 @@ bot\utility\DatabaseCon.class
 bot\utility\RestaurantInfo.class
 bot\utility\DatabaseQuery.class
 bot\utility\Pair.class
+bot\command\NoUsernameCommand.class
 bot\utility\Item.class
 bot\utility\NoSuchUserExistException.class
 bot\command\PaymentTimeLimitExceedCommand.class

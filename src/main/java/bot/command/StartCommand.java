@@ -23,7 +23,7 @@ public class StartCommand implements Command {
                         "To learn more how to use the bot and all the commands, " +
                         "please use /help and /commandlist";
             } else {
-                return "Please login using the website!";
+                return "Please login using the website! Here is the website link https://mix-n-match-orbital.herokuapp.com";
             }
         }
     }
